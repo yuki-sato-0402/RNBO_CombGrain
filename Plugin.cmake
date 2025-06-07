@@ -1,5 +1,5 @@
 # build VST3 for all platforms, add AU on MacOS
-set(PLUGIN_FORMATS VST3)
+set(PLUGIN_FORMATS Standalone VST3)
 if (CMAKE_SYSTEM_NAME STREQUAL Darwin)
   LIST(APPEND PLUGIN_FORMATS AU)
 endif()
@@ -20,17 +20,17 @@ juce_add_plugin(RNBOAudioPlugin
   # VERSION ...                        # Set this if the plugin version is different to the project version
   # ICON_BIG ...                       # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
   # ICON_SMALL ...
-  COMPANY_NAME "Your Company Name"     # Specify the name of the plugin's author
-  IS_SYNTH TRUE                        # Is this a synth or an effect?
-  NEEDS_MIDI_INPUT TRUE                # Does the plugin need midi input?
-  NEEDS_MIDI_OUTPUT TRUE               # Does the plugin need midi output?
+  COMPANY_NAME "cycling74"     # Specify the name of the plugin's author
+  IS_SYNTH FALSE                        # Is this a synth or an effect?
+  NEEDS_MIDI_INPUT FALSE            # Does the plugin need midi input?
+  NEEDS_MIDI_OUTPUT FALSE            # Does the plugin need midi output?
   IS_MIDI_EFFECT FALSE                 # Is this plugin a MIDI effect?
   EDITOR_WANTS_KEYBOARD_FOCUS FALSE    # Does the editor need keyboard focus?
   COPY_PLUGIN_AFTER_BUILD FALSE        # Should the plugin be installed to a default location after building?
-  PLUGIN_MANUFACTURER_CODE "Exmp"      # A four-character manufacturer id with at least one upper-case character
-  PLUGIN_CODE "Rnb0"                   # A unique four-character plugin id with at least one upper-case character
+  PLUGIN_MANUFACTURER_CODE "Exm4"      # A four-character manufacturer id with at least one upper-case character
+  PLUGIN_CODE "Rnb4"                   # A unique four-character plugin id with at least one upper-case character
   FORMATS ${PLUGIN_FORMATS}            # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
-  PRODUCT_NAME "RNBO Plugin")          # The name of the final executable, which can differ from the target name
+  PRODUCT_NAME "Rnbo_CombGrain")          # The name of the final executable, which can differ from the target name
 
 # `juce_generate_juce_header` will create a JuceHeader.h for a given target, which will be generated
 # into your build tree. This should be included with `#include <JuceHeader.h>`. The include path for
@@ -47,8 +47,8 @@ juce_generate_juce_header(RNBOAudioPlugin)
 # that will be built into the target. This is a standard CMake command.
 
 target_sources(RNBOAudioPlugin PRIVATE
-  "${RNBO_CPP_DIR}/adapters/juce/RNBO_JuceAudioProcessor.cpp"
-  "${RNBO_CPP_DIR}/adapters/juce/RNBO_JuceAudioProcessorEditor.cpp"
+  #"${RNBO_CPP_DIR}/adapters/juce/RNBO_JuceAudioProcessor.cpp"
+  #"${RNBO_CPP_DIR}/adapters/juce/RNBO_JuceAudioProcessorEditor.cpp"
   "${RNBO_CPP_DIR}/RNBO.cpp"
   ${RNBO_CLASS_FILE}
   src/Plugin.cpp

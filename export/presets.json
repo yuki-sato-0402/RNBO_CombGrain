@@ -1,0 +1,25 @@
+[
+  {
+    "name": "untitled",
+    "preset": {
+      "FeedCoe": {
+        "value": 0.5
+      },
+      "Mix": {
+        "value": 50
+      },
+      "delTime": {
+        "value": 100
+      },
+      "grainSpeed": {
+        "value": 1
+      },
+      "movDur": {
+        "value": 500
+      },
+      "reverse": {
+        "value": 0
+      }
+    }
+  }
+]

@@ -14,7 +14,7 @@ juce_add_gui_app(RNBOApp
   # ICON_SMALL ...
   # DOCUMENT_EXTENSIONS ...           # Specify file extensions that should be associated with this app
   COMPANY_NAME "cycling74"            # Specify the name of the app's author
-  PRODUCT_NAME "RNBO App Example")    # The name of the final executable, which can differ from the target name
+  PRODUCT_NAME "Rnbo_CombGrain")    # The name of the final executable, which can differ from the target name
 
 # `juce_generate_juce_header` will create a JuceHeader.h for a given target, which will be generated
 # into your build tree. This should be included with `#include <JuceHeader.h>`. The include path for
@@ -41,8 +41,8 @@ target_sources(RNBOApp
 
   ${RNBO_CPP_DIR}/RNBO.cpp
   ${RNBO_CPP_DIR}/adapters/juce/RNBO_JuceAudioProcessorUtils.cpp
-  ${RNBO_CPP_DIR}/adapters/juce/RNBO_JuceAudioProcessorEditor.cpp
-  ${RNBO_CPP_DIR}/adapters/juce/RNBO_JuceAudioProcessor.cpp
+  #${RNBO_CPP_DIR}/adapters/juce/RNBO_JuceAudioProcessorEditor.cpp
+  #${RNBO_CPP_DIR}/adapters/juce/RNBO_JuceAudioProcessor.cpp
   )
 
 if (EXISTS ${RNBO_BINARY_DATA_FILE})
