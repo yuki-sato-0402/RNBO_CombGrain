@@ -7,7 +7,7 @@ Built from the [rnbo.example.juce](https://github.com/Cycling74/rnbo.example.juc
 For *Getting Started*, please refer to the original repository. Also included in this repository is the C++ program output from RNBO in `export/`. And Max patch is included in patches/.
 
 ## Demonstration
-[![](https://github.com/user-attachments/assets/35848eb3-3a19-4c57-8f31-250a2d7fe03e)](https://youtu.be/msMJf8HhrcQ)
+[Youtube<img width="1176" alt="grain" src="https://github.com/user-attachments/assets/02da2137-e503-4ff8-877f-4a52f74582e3" />](https://youtu.be/msMJf8HhrcQ)
 
 ## Reference
 - [jr-granular](https://github.com/szkkng/jr-granular)  
