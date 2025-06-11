@@ -6,7 +6,7 @@ CustomAudioEditor::CustomAudioEditor (CustomAudioProcessor& p, juce::AudioProces
 {
     addAndMakeVisible(reverseButton);
     reverseButton.setButtonText("reverse");
-    reverseButtonAattachment.reset (new ButtonAttachment (valueTreeState, "reverse", reverseButton));
+    reverseButtonAattachment.reset (new ButtonAttachment (valueTreeState, "Reverse", reverseButton));
     
     addAndMakeVisible(dial1Slider);
     dial1Attachment.reset (new SliderAttachment (valueTreeState, "Mix", dial1Slider));
@@ -44,7 +44,7 @@ CustomAudioEditor::CustomAudioEditor (CustomAudioProcessor& p, juce::AudioProces
     dial3Attachment.reset (new SliderAttachment (valueTreeState, "movDur", dial3Slider));
     dial3Slider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);     
     dial3Slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, dial3Slider.getTextBoxWidth(), dial3Slider.getTextBoxHeight());
-    dial1Slider.setTextValueSuffix (" ms");
+    dial3Slider.setTextValueSuffix (" ms");
     dial3Slider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
     dial3Slider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::darkorange.withAlpha(0.75f));
     dial3Slider.setColour(juce::Slider::thumbColourId , juce::Colours::darkorange.brighter(1.5));
@@ -61,6 +61,7 @@ CustomAudioEditor::CustomAudioEditor (CustomAudioProcessor& p, juce::AudioProces
     dial4Attachment.reset (new SliderAttachment (valueTreeState, "delTime", dial4Slider));
     dial4Slider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);     
     dial4Slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, dial4Slider.getTextBoxWidth(), dial4Slider.getTextBoxHeight());
+    dial4Slider.setTextValueSuffix (" ms");
     dial4Slider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
     dial4Slider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::darkorange.withAlpha(0.75f));
     dial4Slider.setColour(juce::Slider::thumbColourId , juce::Colours::darkorange.brighter(1.5));
@@ -84,7 +85,7 @@ CustomAudioEditor::CustomAudioEditor (CustomAudioProcessor& p, juce::AudioProces
     dial5Slider.setColour(juce::Slider::textBoxOutlineColourId , juce::Colours::white);
     
     addAndMakeVisible(label5);
-    label5.setText ("FeedCoe", juce::dontSendNotification);
+    label5.setText ("feedCoe", juce::dontSendNotification);
     label5.setJustificationType(juce::Justification::centred);
 
     setSize(600, 500);
@@ -93,7 +94,7 @@ CustomAudioEditor::CustomAudioEditor (CustomAudioProcessor& p, juce::AudioProces
 
 void CustomAudioEditor::paint (Graphics& g)
 {
-    g.fillAll(juce::Colours::darkorange); // 背景を黒に設定
+    g.fillAll(juce::Colours::darkorange); 
 }
 
 void CustomAudioEditor::resized()
