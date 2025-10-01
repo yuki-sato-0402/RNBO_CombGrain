@@ -2,7 +2,7 @@
 #include "CustomAudioEditor.h"
 
 CustomAudioEditor::CustomAudioEditor (CustomAudioProcessor& p, juce::AudioProcessorValueTreeState& vts)
-: AudioProcessorEditor (&p), valueTreeState(vts), audioProcessor(p)// 参照メンバーを初期化（必須）
+: AudioProcessorEditor (&p), valueTreeState(vts), audioProcessor(p)
 {
     addAndMakeVisible(reverseButton);
     reverseButton.setButtonText("reverse");
@@ -57,7 +57,7 @@ CustomAudioEditor::CustomAudioEditor (CustomAudioProcessor& p, juce::AudioProces
     label3.setJustificationType(juce::Justification::centred);
 
 
-  addAndMakeVisible(dial4Slider);
+    addAndMakeVisible(dial4Slider);
     dial4Attachment.reset (new SliderAttachment (valueTreeState, "delTime", dial4Slider));
     dial4Slider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);     
     dial4Slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, dial4Slider.getTextBoxWidth(), dial4Slider.getTextBoxHeight());
@@ -99,7 +99,6 @@ void CustomAudioEditor::paint (Graphics& g)
 
 void CustomAudioEditor::resized()
 {
-    //エディター全体の領域を取得
     auto area = getLocalBounds();
 
     const int componentWidth1 = (area.getWidth() - 80)/3;

@@ -10,7 +10,6 @@ CustomAudioProcessor::CustomAudioProcessor()
                   .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                   #endif
                   ),
-//コンストラクタの イニシャライザリスト で初期化
 parameters(*this, nullptr, juce::Identifier("PARAMETERS"),
     juce::AudioProcessorValueTreeState::ParameterLayout {
     std::make_unique<juce::AudioParameterFloat>(ParameterID { "Mix",  1}, "Mix",
@@ -47,7 +46,7 @@ parameters(*this, nullptr, juce::Identifier("PARAMETERS"),
 
       // If you hit these assertions then you need to fix the incorrect apvts
       // parameter range in createParameterLayout().
-      std::cout << std::setprecision(20); // より精密な出力にする
+      std::cout << std::setprecision(20); 
       std::cout << "info.min: " << info.min << std::endl;
       std::cout << "range.start: " << parameters.getParameterRange(paramID).start << std::endl;
 
@@ -58,7 +57,7 @@ parameters(*this, nullptr, juce::Identifier("PARAMETERS"),
     
 
       parameters.addParameterListener(paramID, this);
-      rnboObject.setParameterValue(i, parameters.getRawParameterValue(paramID)->load());  // RNBO に適用
+      rnboObject.setParameterValue(i, parameters.getRawParameterValue(paramID)->load());  
       
     } 
   }
@@ -72,7 +71,6 @@ void CustomAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
 void CustomAudioProcessor::releaseResources()
 {
 }
- 
 
 
 void CustomAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
@@ -85,19 +83,14 @@ void CustomAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::
     );     
 }
 
-////このコールバック メソッドは、パラメータが変更されたときに AudioProcessorValueTreeStateによって呼び出されます。
 void CustomAudioProcessor::parameterChanged(const juce::String& parameterID, float newValue)
 {
-    //std::cout << "parameterID " << parameterID<< newValue << std::endl;
     rnboObject.setParameterValue (apvtsParamIdToRnboParamIndex[parameterID], newValue);
 }
 
 juce::AudioProcessorEditor* CustomAudioProcessor::createEditor()
 {
-    //AudioProcessorEditor側でAudioProcessorValueTreeStateにアクセスするための方法が必要。
    return new CustomAudioEditor (*this,  parameters);
-    //RNBOのデフォルトエディター, 標準的なパラメータ表示, 追加のカスタマイズが限定的
-  // return RNBO::JuceAudioProcessor::createEditor();
 }
 
 bool CustomAudioProcessor::hasEditor() const
