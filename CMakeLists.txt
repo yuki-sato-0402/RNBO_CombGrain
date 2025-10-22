@@ -55,7 +55,7 @@ add_subdirectory(
 add_compile_definitions(JUCE_VST3_EMULATE_MIDI_CC_WITH_PARAMETERS=0)
 
 # setup your application, you can remove this include if you don't want to build applications
-include(${CMAKE_CURRENT_LIST_DIR}/App.cmake)
+#include(${CMAKE_CURRENT_LIST_DIR}/App.cmake)
 
 # setup your plugin(s), you can remove this include if you don't want to build plugins
 include(${CMAKE_CURRENT_LIST_DIR}/Plugin.cmake)

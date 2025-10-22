@@ -28,6 +28,7 @@ CustomAudioEditor::CustomAudioEditor (CustomAudioProcessor& p, juce::AudioProces
     dial2Attachment.reset (new SliderAttachment (valueTreeState, "grainSpeed", dial2Slider));
     dial2Slider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
     dial2Slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, dial2Slider.getTextBoxWidth(), dial2Slider.getTextBoxHeight());
+    dial2Slider.setTextValueSuffix (" Hz");
     dial2Slider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
     dial2Slider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::darkorange.withAlpha(0.75f));
     dial2Slider.setColour(juce::Slider::thumbColourId , juce::Colours::darkorange.brighter(1.5));
@@ -74,7 +75,7 @@ CustomAudioEditor::CustomAudioEditor (CustomAudioProcessor& p, juce::AudioProces
 
 
     addAndMakeVisible(dial5Slider);
-    dial5Attachment.reset (new SliderAttachment (valueTreeState, "FeedCoe", dial5Slider));
+    dial5Attachment.reset (new SliderAttachment (valueTreeState, "feedCoe", dial5Slider));
     dial5Slider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);     
     dial5Slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, dial5Slider.getTextBoxWidth(), dial5Slider.getTextBoxHeight());
     dial5Slider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
