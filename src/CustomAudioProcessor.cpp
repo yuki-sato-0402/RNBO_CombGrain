@@ -100,7 +100,7 @@ bool CustomAudioProcessor::hasEditor() const
 
 
 const juce::String CustomAudioProcessor::getName() const{
-    return "Rnbo_FourierSeriesExpansionSynthesizer";
+    return "RNBO_CombGrain";
 }
 
 bool CustomAudioProcessor::acceptsMidi() const
