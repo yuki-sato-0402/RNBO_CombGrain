@@ -173,13 +173,16 @@ namespace RNBO {
 		 * @brief Create a lightweight interface for sending and receiving parameter values
 		 *
 		 * The CoreObject, by default, holds a parameter interface for sending and receiving events with
-		 * the non-thread-safe MultiProducer interface type.
+		 * the thread-safe MultiProducer interface type.
 		 *
 		 * @see RNBO::ParameterEventInterface
 		 *
 		 * @param type the type of parameter event interface to create
 		 * @param handler an event handler
 		 * @return a ParameterEventInterfaceUniquePtr
+         *
+         * NOTE: if you create a thread safe async parameter interface you will NOT get any events and values
+         *       out unless you use a handler which correctly drains these events
 		 */
 		ParameterEventInterfaceUniquePtr createParameterInterface(ParameterEventInterface::Type type, EventHandler* handler);
 
@@ -382,7 +385,7 @@ namespace RNBO {
 		 * @param force if true, ensures the dspsetup methods of patcher objects are called
 		 * @return false if called during setPatcher, true otherwise
 		 */
-		bool prepareToProcess(number sampleRate, size_t maxBlockSize, bool force = false);
+		bool prepareToProcess(number sampleRate, Index maxBlockSize, bool force = false);
 
 		/**
 		 * @brief Get the current time (in ms)

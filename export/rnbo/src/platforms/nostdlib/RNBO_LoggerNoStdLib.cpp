@@ -10,7 +10,7 @@
 namespace RNBO {
 
 	Logger consoleInstance;
-	LoggerInterface* console = &consoleInstance;
+	Logger* console = &consoleInstance;
 
 	Logger::Logger()
 	: _outputCallback(&Logger::defaultLogOutputFunction)

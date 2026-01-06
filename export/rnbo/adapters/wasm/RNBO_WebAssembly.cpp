@@ -1,6 +1,10 @@
 // use the core engine, we do not need thread safety and state restoration
+#ifndef RNBO_SIMPLEENGINE
 #define RNBO_SIMPLEENGINE
+#endif
+#ifndef RNBO_NO_INT64
 #define RNBO_NO_INT64
+#endif
 
 #include "RNBO.h"
 #include "RNBO.cpp"
@@ -235,6 +239,13 @@ public:
         uintptr_t source
     ) {
         this->scheduleEvent(RNBO::ParameterEvent(parameterIndex, eventTime, value, reinterpret_cast<RNBO::ParameterInterfaceId>(source)));
+    }
+
+    void scheduleParameterBangEventWrapper(
+        RNBO::Index parameterIndex,
+        RNBO::MillisecondTime eventTime
+    ) {
+        this->scheduleEvent(RNBO::ParameterBangEvent(parameterIndex, eventTime));
     }
 
 	void scheduleTransportEventWrapper(
@@ -635,6 +646,7 @@ EMSCRIPTEN_BINDINGS(rnbo) {
         .function("process", &CoreObjectWrapper::processWrapper)
         .function("scheduleMidiEvent", &CoreObjectWrapper::scheduleMidiEventWrapper)
         .function("scheduleParameterEvent", &CoreObjectWrapper::scheduleParameterEventWrapper)
+        .function("scheduleParameterBangEvent", &CoreObjectWrapper::scheduleParameterBangEventWrapper)
         .function("scheduleTransportEvent", &CoreObjectWrapper::scheduleTransportEventWrapper)
         .function("scheduleTempoEvent", &CoreObjectWrapper::scheduleTempoEventWrapper)
         .function("scheduleBeatTimeEvent", &CoreObjectWrapper::scheduleBeatTimeEventWrapper)

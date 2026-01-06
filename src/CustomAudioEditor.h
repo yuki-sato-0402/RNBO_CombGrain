@@ -15,25 +15,28 @@ private:
     juce::AudioProcessorValueTreeState& valueTreeState; // ✅ Hold by reference
     CustomAudioProcessor& audioProcessor;
     
-    juce::Slider dial1Slider;
-    juce::Slider dial2Slider;
-    juce::Slider dial3Slider;
-    juce::Slider dial4Slider;
-    juce::Slider dial5Slider;
+    juce::Slider MixDial;
+    juce::Slider grainSpeedDial;
+    juce::Slider densityDial;
+    juce::Slider movDurDial;
+    juce::Slider delTimeDial;
+    juce::Slider feedCoeDial;
 
     juce::ToggleButton reverseButton;
 
-    juce::Label  label1;
-    juce::Label  label2;
-    juce::Label  label3;
-    juce::Label  label4;
-    juce::Label  label5;
+    juce::Label  MixLabel;
+    juce::Label  grainSpeedLabel;
+    juce::Label  densityLabel;
+    juce::Label  movDurLabel;
+    juce::Label  delTimeLabel;
+    juce::Label  feedCoeLabel;
 
-    std::unique_ptr<SliderAttachment> dial1Attachment;
-    std::unique_ptr<SliderAttachment> dial2Attachment;
-    std::unique_ptr<SliderAttachment> dial3Attachment;
-    std::unique_ptr<SliderAttachment> dial4Attachment;
-    std::unique_ptr<SliderAttachment> dial5Attachment;
+    std::unique_ptr<SliderAttachment> MixDialAttachment;
+    std::unique_ptr<SliderAttachment> grainSpeedDialAttachment;
+    std::unique_ptr<SliderAttachment> densityDialAttachment;
+    std::unique_ptr<SliderAttachment> movDurDialAttachment;
+    std::unique_ptr<SliderAttachment> delTimeDialAttachment;
+    std::unique_ptr<SliderAttachment> feedCoeDialAttachment;
     std::unique_ptr<ButtonAttachment> reverseButtonAattachment;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CustomAudioEditor)

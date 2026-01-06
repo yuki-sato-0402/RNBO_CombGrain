@@ -17,14 +17,16 @@ parameters(*this, nullptr, juce::Identifier("PARAMETERS"),
     std::make_unique<juce::AudioParameterFloat>(ParameterID { "movDur",  1}, "movDur",
     juce::NormalisableRange<float>(5.f, 1000.f, 0.01f, 1.f), 500.f),
     std::make_unique<juce::AudioParameterFloat>(ParameterID { "grainSpeed",  1}, "grainSpeed",
-    juce::NormalisableRange<float>(0.2f, 30.f, 0.01f, 1.f), 1.f),
-    std::make_unique<juce::AudioParameterFloat>(ParameterID { "FeedCoe",  1}, "FeedCoe",
+    juce::NormalisableRange<float>(0.1f, 30.f, 0.01f, 1.f), 1.f),
+    std::make_unique<juce::AudioParameterFloat>(ParameterID { "density",  1}, "density",
+    juce::NormalisableRange<float>(1.f, 100.f, 0.01f, 1.f), 50.f),
+    std::make_unique<juce::AudioParameterFloat>(ParameterID { "feedCoe",  1}, "feedCoe",
     juce::NormalisableRange<float>(0.01f, 0.9f, 0.01f, 1.f), 0.5f),
     std::make_unique<juce::AudioParameterFloat>(ParameterID { "delTime",  1}, "delTime",
-    juce::NormalisableRange<float>(2.f, 1000.f, 0.01f, 1.f), 100.f),
+    juce::NormalisableRange<float>(2.f, 2500.f, 0.01f, 1.f), 100.f),
     std::make_unique<juce::AudioParameterFloat>(ParameterID { "reverse",  1}, "reverse",
     juce::NormalisableRange<float>(0, 1, 1, 1), 0)
-}
+    }
   )
 {
  
@@ -43,12 +45,6 @@ parameters(*this, nullptr, juce::Identifier("PARAMETERS"),
       // Each apvts parameter id and range must be the same as the rnbo param object's.
       // If you hit this assertion then you need to fix the incorrect id in ParamIDs.h.
       jassert (parameters.getParameter (paramID) != nullptr);
-
-      // If you hit these assertions then you need to fix the incorrect apvts
-      // parameter range in createParameterLayout().
-      std::cout << std::setprecision(20); 
-      std::cout << "info.min: " << info.min << std::endl;
-      std::cout << "range.start: " << parameters.getParameterRange(paramID).start << std::endl;
 
       constexpr float epsilon = 1e-5f;
       jassert (std::abs(static_cast<float>(info.min) - parameters.getParameterRange(paramID).start) < epsilon);

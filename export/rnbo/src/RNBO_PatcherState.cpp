@@ -6,10 +6,15 @@
 //
 
 #include "RNBO_PatcherState.h"
+#include "RNBO_AudioSignal.h"
 
 namespace RNBO {
 
-	ValueHolder::ValueHolder(number val)
+	ValueHolder::ValueHolder(float val)
+	: _value(val)
+	{}
+
+	ValueHolder::ValueHolder(double val)
 	: _value(val)
 	{}
 
@@ -17,7 +22,11 @@ namespace RNBO {
 	: _value((Int)val)
 	{}
 
-	ValueHolder::ValueHolder(Index val)
+	ValueHolder::ValueHolder(UInt32 val)
+	: _value(val)
+	{}
+
+	ValueHolder::ValueHolder(UInt64 val)
 	: _value(val)
 	{}
 
@@ -49,6 +58,10 @@ namespace RNBO {
 	: _value(std::move(dataRef))
 	{}
 
+    ValueHolder::ValueHolder(SerializedBuffer&& data)
+    : _value(std::move(data))
+    {}
+
 	ValueHolder::ValueHolder(const signal sig)
 	: _value(sig)
 	{}
@@ -60,18 +73,35 @@ namespace RNBO {
 	ValueHolder::ValueHolder()
 	{}
 
-	ValueHolder::operator number() const { return mpark::get<number>(_value); }
+    ValueHolder::~ValueHolder() {
+        if (getType() == ValueHolder::SIGNAL) {
+            signal _sig = mpark::get<signal>(_value);
+            if (_sig) {
+                freeSignal(_sig);
+                _value = (signal) nullptr;
+            }
+        }
+    }
+
+	ValueHolder::operator float() const { return mpark::get<float>(_value); }
+	ValueHolder::operator double() const { return mpark::get<double>(_value); }
 	ValueHolder::operator Int() const { return mpark::get<Int>(_value); }
-	ValueHolder::operator Index() const { return mpark::get<Index>(_value); }
+	ValueHolder::operator UInt32() const { return mpark::get<UInt32>(_value); }
+	ValueHolder::operator UInt64() const { return mpark::get<UInt64>(_value); }
 	ValueHolder::operator bool() const { return mpark::get<bool>(_value); }
 	ValueHolder::operator PatcherEventTarget*() { return mpark::get<PatcherEventTarget*>(_value); }
-	ValueHolder::operator signal() { return mpark::get<signal>(_value); }
+    ValueHolder::operator signal() {
+        signal _sig = mpark::get<signal>(_value);
+        _value = (signal)nullptr;
+        return _sig;
+    }
 
 	ValueHolder::operator ExternalPtr() { return std::move(mpark::get<ExternalPtr>(_value)); }
 	ValueHolder::operator const list&() const { return mpark::get<list>(_value); }
 	ValueHolder::operator DataRef&() { return mpark::get<DataRef>(_value); }
 	ValueHolder::operator MultiDataRef&() { return mpark::get<MultiDataRef>(_value); }
 	ValueHolder::operator const char*() const { return mpark::get<String>(_value).c_str(); }
+    ValueHolder::operator SerializedBuffer&() { return mpark::get<SerializedBuffer>(_value); }
 
 	ValueHolder::operator PatcherState&() {
 		if (!mpark::holds_alternative<StateMapPtr>(_value)) allocateSubState();
@@ -79,12 +109,12 @@ namespace RNBO {
 	}
 	PatcherState& ValueHolder::operator[](Index i) {
 		if (!mpark::holds_alternative<SubStateMapPtr>(_value)) allocateSubStateMap();
-		std::shared_ptr<ValueHolder> ps = (*mpark::get<SubStateMapPtr>(_value))[i];
-		if (!ps) {
-			ps = std::make_shared<ValueHolder>();
-			(*mpark::get<SubStateMapPtr>(_value))[i] = ps;
+		SubStateMapPtr subPtr = mpark::get<SubStateMapPtr>(_value);
+		if (subPtr->find(i) == subPtr->end()) {
+			auto ps = std::make_shared<ValueHolder>();
+			subPtr->insert({ i, ps });
 		}
-		return *(*mpark::get<SubStateMapPtr>(_value))[i];
+		return *(subPtr->at(i));
 	}
 
 	ValueHolder::operator const PatcherState&() const
@@ -121,9 +151,11 @@ namespace RNBO {
 
 	struct GetTypeVisitor {
 		constexpr ValueHolder::Type operator()(const mpark::monostate&) const { return ValueHolder::NONE; }
-		constexpr ValueHolder::Type operator()(const number&) const { return ValueHolder::NUMBER; }
+		constexpr ValueHolder::Type operator()(const float&) const { return ValueHolder::FLOAT; }
+		constexpr ValueHolder::Type operator()(const double&) const { return ValueHolder::DOUBLE; }
 		constexpr ValueHolder::Type operator()(const Int&) const { return ValueHolder::INTVALUE; }
-		constexpr ValueHolder::Type operator()(const Index&) const { return ValueHolder::INDEX; }
+		constexpr ValueHolder::Type operator()(const UInt32&) const { return ValueHolder::UINT32; }
+		constexpr ValueHolder::Type operator()(const UInt64&) const { return ValueHolder::UINT64; }
 		constexpr ValueHolder::Type operator()(const bool&) const { return ValueHolder::BOOLEAN; }
 		constexpr ValueHolder::Type operator()(const ExternalPtr&) const { return ValueHolder::EXTERNAL; }
 		constexpr ValueHolder::Type operator()(const StateMapPtr&) const { return ValueHolder::SUBSTATE; }
@@ -134,6 +166,7 @@ namespace RNBO {
 		constexpr ValueHolder::Type operator()(const MultiDataRef&) const { return ValueHolder::MULTIREF; }
 		constexpr ValueHolder::Type operator()(const signal&) const { return ValueHolder::SIGNAL; }
 		constexpr ValueHolder::Type operator()(const String&) const { return ValueHolder::STRING; }
+        constexpr ValueHolder::Type operator()(const SerializedBuffer&) const { return ValueHolder::BUFFER; }
 	};
 
 	ValueHolder::Type ValueHolder::getType() const
@@ -141,7 +174,12 @@ namespace RNBO {
 		return mpark::visit(GetTypeVisitor{}, _value);
 	}
 
-	void PatcherState::add(const char* key, number val)
+	void PatcherState::add(const char* key, float val)
+	{
+		_map.emplace(key, val);
+	}
+
+	void PatcherState::add(const char* key, double val)
 	{
 		_map.emplace(key, val);
 	}
@@ -151,7 +189,12 @@ namespace RNBO {
 		_map.emplace(key, val);
 	}
 
-	void PatcherState::add(const char* key, Index val)
+	void PatcherState::add(const char* key, UInt32 val)
+	{
+		_map.emplace(key, val);
+	}
+
+	void PatcherState::add(const char* key, UInt64 val)
 	{
 		_map.emplace(key, val);
 	}
@@ -196,9 +239,19 @@ namespace RNBO {
 		_map.emplace(key, str);
 	}
 
-	number PatcherState::getFloat(const char* key)
+    void PatcherState::add(const char* key, SerializedBuffer& data)
+    {
+        _map.emplace(key, std::move(data));
+    }
+
+	float PatcherState::getFloat(const char* key)
 	{
-		return (number)_map[key];
+		return (float)_map[key];
+	}
+
+	double PatcherState::getDouble(const char* key)
+	{
+		return (double)_map[key];
 	}
 
 	Int PatcherState::getInt(const char* key)
@@ -206,9 +259,14 @@ namespace RNBO {
 		return static_cast<Int>(_map[key]);
 	}
 
-	Index PatcherState::getIndex(const char* key)
+	UInt32 PatcherState::getUInt32(const char* key)
 	{
-		return static_cast<Index>(_map[key]);
+		return static_cast<UInt32>(_map[key]);
+	}
+
+	UInt64 PatcherState::getUInt64(const char* key)
+	{
+		return static_cast<UInt64>(_map[key]);
 	}
 
 	bool PatcherState::getBool(const char* key)
@@ -276,6 +334,11 @@ namespace RNBO {
 	{
 		return _map[key];
 	}
+
+    SerializedBuffer& PatcherState::getBuffer(const char *key)
+    {
+        return _map[key];
+    }
 
 	bool PatcherState::containsValue(const char* key) const
 	{

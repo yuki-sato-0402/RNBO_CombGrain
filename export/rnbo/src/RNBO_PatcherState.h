@@ -12,9 +12,12 @@
 #include <vector>
 #include <memory>
 
+#include "RNBO_Debug.h"
+#include "RNBO_String.h"
 #include "RNBO_Types.h"
 #include "RNBO_ExternalPtr.h"
 #include "RNBO_PatcherEventTarget.h"
+#include "RNBO_PatcherStateInterface.h"
 #include "RNBO_List.h"
 #include "RNBO_DataRef.h"
 
@@ -39,7 +42,8 @@ namespace RNBO {
 		 */
 		enum Type {
 			NONE,           ///< no value
-			NUMBER,         ///< floating point number
+			FLOAT,          ///< floating point number
+			DOUBLE,         ///< double precision floating point number
 			EXTERNAL,       ///< @private
 			SUBSTATE,       ///< subpatcher state
 			SUBSTATEMAP,    ///< subpatcher state map
@@ -49,15 +53,22 @@ namespace RNBO {
 			MULTIREF,       ///< @private
 			SIGNAL,         ///< @private
 			STRING,         ///< @private
-			INDEX,          ///< @private
+			UINT32,         ///< @private
 			BOOLEAN,        ///< @private
-			INTVALUE        ///< @private
+			INTVALUE,       ///< @private
+			UINT64,        	///< @private
+            BUFFER          ///< serialized content of a data buffer
 		};
 
 		/**
-		 * @brief Construct a ValueHolder from a number
+		 * @brief Construct a ValueHolder from a float
 		 */
-		ValueHolder(number val);
+		ValueHolder(float val);
+
+		/**
+		 * @brief Construct a ValueHolder from a float
+		 */
+		ValueHolder(double val);
 
 		/**
 		 * @brief Construct a ValueHolder from an integer
@@ -67,7 +78,12 @@ namespace RNBO {
 		/**
 		 * @brief Construct a ValueHolder from an Index
 		 */
-		ValueHolder(Index val);
+		ValueHolder(UInt32 val);
+
+		/**
+		 * @brief Construct a ValueHolder from an Index
+		 */
+		ValueHolder(UInt64 val);
 
 		/**
 		 * @brief Construct a ValueHolder from a bool
@@ -117,13 +133,31 @@ namespace RNBO {
 		ValueHolder(const char* str);
 
 		/**
+		 * @private
+		 */
+		ValueHolder(SerializedBuffer&& data);
+
+		/**
 		 * @brief Construct a value without a type
 		 */
 		ValueHolder();
 
-		explicit operator number() const;
+		~ValueHolder();
+
+		//no copy constructor/assign
+		ValueHolder(const ValueHolder&) = delete;
+		ValueHolder& operator=(ValueHolder&) = delete;
+
+		//default move constructor
+		ValueHolder(ValueHolder&&) = default;
+		//explicit delete move assignment, mpark variant does so it would be implicitly deleted anyway
+		ValueHolder& operator=(ValueHolder&&) = delete;
+
+		explicit operator float() const;
+		explicit operator double() const;
 		explicit operator Int() const;
-		explicit operator Index() const;
+		explicit operator UInt32() const;
+		explicit operator UInt64() const;
 		explicit operator bool() const;
 		explicit operator PatcherEventTarget*();
 		explicit operator signal();
@@ -133,6 +167,7 @@ namespace RNBO {
 		operator DataRef&();
 		operator MultiDataRef&();
 		operator const char*() const;
+		operator SerializedBuffer&();
 
 		operator PatcherState&();
 		PatcherState& operator[](Index i);
@@ -157,9 +192,10 @@ namespace RNBO {
 
 		mpark::variant<
 			mpark::monostate,
-			number,
+			float,
+			double,
 			Int,
-			Index,
+			UInt32,
 			bool,
 			ExternalPtr,
 			StateMapPtr,
@@ -169,7 +205,9 @@ namespace RNBO {
 			DataRef,
 			MultiDataRef,
 			signal,
-			String
+			String,
+			UInt64,
+            SerializedBuffer
 		> _value;
 	};
 
@@ -179,8 +217,12 @@ namespace RNBO {
 	 * @brief A representation of the RNBO patcher graph
 	 */
 	class PatcherState : public PatcherStateInterface {
-
 	public:
+
+        PatcherState() {}
+
+        PatcherState (const PatcherState&) = delete;
+        PatcherState& operator= (const PatcherState&) = delete;
 
 		using Iterator = typename StateMap::iterator;
 		using ConstIterator = typename StateMap::const_iterator;
@@ -207,18 +249,18 @@ namespace RNBO {
 
 		/**
 		 * @brief Get a substate (e.g. a subpatcher)
-		 * 
-		 * @param key the substate name 
-		 * @return PatcherState& 
+		 *
+		 * @param key the substate name
+		 * @return PatcherState&
 		 */
 		PatcherState& getSubState(const char* key) override;
 
 		/**
 		 * @brief Get a substate (e.g. a subpatcher) from an array of multiple substates
-		 * 
+		 *
 		 * @param key the substate name
 		 * @param i the index of the substate in the array
-		 * @return PatcherState& 
+		 * @return PatcherState&
 		 */
 		PatcherState& getSubStateAt(const char* key, Index i) override;
 
@@ -227,13 +269,17 @@ namespace RNBO {
 			return helper;
 		}
 
+        virtual bool isDummy() const { return false; }
+
 	private:
 
 		friend class StateHelper<PatcherState>;
 
-		void add(const char* key, number val) override;
+		void add(const char* key, float val) override;
+		void add(const char* key, double val) override;
 		void add(const char* key, Int val) override;
-		void add(const char* key, Index val) override;
+		void add(const char* key, UInt32 val) override;
+		void add(const char* key, UInt64 val) override;
 		void add(const char* key, bool val) override;
 		void add(const char* key, ExternalPtr& ext) override;
 		void add(const char* key, PatcherEventTarget* patcherEventTarget) override;
@@ -242,10 +288,13 @@ namespace RNBO {
 		void add(const char* key, MultiDataRef& dataRef) override;
 		void add(const char* key, signal sig) override;
 		void add(const char* key, const char* str) override;
+        void add(const char* key, SerializedBuffer& data) override;
 
-		number getFloat(const char* key) override;
+		float getFloat(const char* key) override;
+		double getDouble(const char* key) override;
 		Int getInt(const char* key) override;
-		Index getIndex(const char* key) override;
+		UInt32 getUInt32(const char* key) override;
+		UInt64 getUInt64(const char* key) override;
 		bool getBool(const char* key) override;
 		ExternalPtr getExternalPtr(const char* key) override;
 		PatcherEventTarget* getEventTarget(const char* key) override;
@@ -257,6 +306,7 @@ namespace RNBO {
 		MultiDataRef& getMultiDataRef(const char *key) override;
 		signal getSignal(const char *key) override;
 		const char* getString(const char *key) override;
+        SerializedBuffer& getBuffer(const char *key) override;
 
 		bool containsValue(const char* key) const override;
 

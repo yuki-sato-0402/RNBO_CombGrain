@@ -1,7 +1,9 @@
+#define RNBO_USECUSTOMPLATFORMPRINT
+
 #include <RNBO.h>
+#include <RNBO_MaxExternalPlatform.h>
 #include <RNBO_MaxPresetAdapter.h>
 #include <RNBO_MidiStreamParser.h>
-#include <RNBO_MaxPlatformInterface.h>
 #include <json/json.hpp>
 #include <c74_min.h>
 #include <atomic>
@@ -52,8 +54,6 @@ using c74::min::flags;
 
 namespace {
 	const std::regex inportEventInRegex("^in[[:digit:]]+$");
-
-	static MaxPlatformInterface maxPlatformInstance;
 
 	void LoggerOutputFunction(RNBO::LogLevel level, const char *message)
 	{
@@ -536,6 +536,9 @@ void rnbowrapper_parameter_attr_override(void *_x, t_object *valueof)
 	c74::max::object_attr_addattr_parse(valueof, "parameter_invisible", "invisible", sym_long, 0, "1");
 }
 
+extern "C"
+void rnbowrapper_getinstanceattrs(void* _x, long* count, t_symbol*** attrnames);
+
 class rnbo_external_wrapper :
 	public c74::min::object<rnbo_external_wrapper>
 #if RNBO_WRAPPER_HAS_AUDIO
@@ -856,11 +859,15 @@ class rnbo_external_wrapper :
 
 				//only supporting numbers right now
 				//don't bind invisible or debug
-				if (info.type != ParameterType::ParameterTypeNumber || !info.visible || info.debug)
+				if (!(info.type == ParameterType::ParameterTypeNumber || info.type == ParameterType::ParameterTypeSignal) || !info.visible || info.debug)
 					continue;
 				std::string name = mRNBOObj.getParameterId(i);
 				std::shared_ptr<c74::min::attribute_base> a;
+				c74::min::range param_range;
+
 				if (info.enumValues == nullptr) {
+					 param_range.push_back(std::to_string(info.min));
+					 param_range.push_back(std::to_string(info.max));
 					 a = std::make_shared<attr_param>(
 							this,
 							name,
@@ -879,7 +886,8 @@ class rnbo_external_wrapper :
 									auto v = mEventHandler->getParameterValue(i);
 									return c74::min::atoms { v };
 								}
-							}
+							},
+							param_range
 					);
 				} else if (info.steps == 2 && strcmp(info.enumValues[0], "0") == 0 && strcmp(info.enumValues[1], "1") == 0) {
 					a = std::make_shared<attr_onoff_param>(
@@ -917,12 +925,11 @@ class rnbo_external_wrapper :
 					//build out list of strings and lookups to convert to from rnbo ParameterValue and max symbols
 					std::string initial(info.enumValues[std::min(std::max(0, static_cast<int>(info.initialValue)), info.steps - 1)]);
 					//the atoms that min uses to identify the list of enum values
-					c74::min::range values;
 					//lookup to find a parameter value for an enum symbol (string)
 					std::unordered_map<std::string, double> lookup;
 					for (int e = 0; e < info.steps; e++) {
 						std::string s(info.enumValues[e]);
-						values.push_back(s);
+						param_range.push_back(s);
 						lookup[s] = static_cast<ParameterValue>(e);
 					}
 					a = std::make_shared<attr_enum_param>(
@@ -959,12 +966,12 @@ class rnbo_external_wrapper :
 								}
 							},
 							c74::min::getter {
-								[this, i, values]() -> c74::min::atoms {
-									auto v = std::min(std::max(static_cast<int>(mEventHandler->getParameterValue(i)), 0), static_cast<int>(values.size() - 1));
-									return { values[v] };
+								[this, i, param_range]() -> c74::min::atoms {
+									auto v = std::min(std::max(static_cast<int>(mEventHandler->getParameterValue(i)), 0), static_cast<int>(param_range.size() - 1));
+									return { param_range[v] };
 								}
 							},
-							values
+							param_range
 					);
 				}
 				mAttributes.emplace_back(a);
@@ -1092,12 +1099,12 @@ class rnbo_external_wrapper :
 		c74::min::message<> mMaxClassSetup {
 			this, "maxclass_setup",
 			[this](const c74::min::atoms& args, const int _inlet) -> c74::min::atoms {
-				RNBO::Platform::set(&maxPlatformInstance);
 				RNBO::Logger::getInstance().setLoggerOutputCallback(LoggerOutputFunction);
 
 				c74::max::t_class * c = args[0];
 
 				c74::max::class_addmethod(c, (c74::max::method) rnbowrapper_parameter_attr_override, "parameter_attr_override", c74::max::A_CANT, 0);
+				c74::max::class_addmethod(c, (c74::max::method) rnbowrapper_getinstanceattrs, "getinstanceattrs", c74::max::A_CANT, 0);
 
 				c74::max::t_atom a;
 				//c74::max::atom_setlong(&a, PARAM_TYPE_BLOB);
@@ -1142,7 +1149,7 @@ class rnbo_external_wrapper :
 				int len = midiEvent.getLength();
 				ConstByteArray data = midiEvent.getData();
 				for (int i = 0; i < len; i++)
-					mMIDIOutlet->send(data[i]);
+					mMIDIOutlet->send(static_cast<int>(data[i]));
 			}
 		}
 
@@ -1282,18 +1289,35 @@ class rnbo_external_wrapper :
 			const char* tag = mRNBOObj.resolveTag(event.getTag());
 			c74::min::atoms atoms = { tag };
 
+			auto eventoutlet = mMessageOutletMap.find(atoms[0]);
+
 			switch (event.getType()) {
 				case MessageEvent::Type::Number:
+					if (eventoutlet != mMessageOutletMap.end() && mOutlets.size() > eventoutlet->second) {
+						mOutlets[eventoutlet->second]->send(event.getNumValue());
+						return;
+					}
 					atoms.push_back(event.getNumValue());
 					break;
 				case MessageEvent::Type::Bang:
+					if (eventoutlet != mMessageOutletMap.end() && mOutlets.size() > eventoutlet->second) {
+						mOutlets[eventoutlet->second]->send(c74::min::k_sym_bang);
+						return;
+					}
 					atoms.push_back(c74::min::k_sym_bang);
 					break;
 				case MessageEvent::Type::List:
 					{
 						std::shared_ptr<const RNBO::list> elist = event.getListValue();
-						for (size_t i = 0; i < elist->length; i++)
+						for (size_t i = 0; i < elist->length; i++) {
 							atoms.push_back(elist->operator[](i));
+						}
+						if (eventoutlet != mMessageOutletMap.end() && mOutlets.size() > eventoutlet->second) {
+							//remove tag
+							c74::min::atoms out(atoms.begin() + 1, atoms.end());
+							mOutlets[eventoutlet->second]->send(out);
+							return;
+						}
 					}
 					break;
 				case MessageEvent::Type::Invalid:
@@ -1302,15 +1326,6 @@ class rnbo_external_wrapper :
 					return; //TODO warning message?
 			}
 
-			if (atoms.size() > 0 && atoms[0].type() == c74::min::message_type::symbol_argument) {
-				auto it = mMessageOutletMap.find(atoms[0]);
-				if (it != mMessageOutletMap.end() && mOutlets.size() > it->second) {
-					//remove tag
-					c74::min::atoms out(atoms.begin() + 1, atoms.end());
-					mOutlets[it->second]->send(out);
-					return;
-				}
-			}
 			if (mMessageOutlet)
 				mMessageOutlet->send(atoms);
 		}
@@ -1391,6 +1406,33 @@ class rnbo_external_wrapper :
 		//work around double trigger for parameters by not sending attribute values in at attr init
 		bool mAttributesAreSetup = false;
 };
+
+extern "C"
+void rnbowrapper_getinstanceattrs(void* _x, long* count, t_symbol*** attrnames)
+{
+	RNBO::CoreObject rnbocore;
+	//only pick valid names
+	std::vector<std::string> names;
+
+	for (RNBO::ParameterIndex i = 0; i < rnbocore.getNumParameters(); i++) {
+		ParameterInfo info;
+		rnbocore.getParameterInfo(i, &info);
+
+		//only supporting numbers right now
+		//don't bind invisible or debug
+		if (!(info.type == ParameterType::ParameterTypeNumber || info.type == ParameterType::ParameterTypeSignal) || !info.visible || info.debug)
+			continue;
+		names.push_back(rnbocore.getParameterId(i));
+	}
+
+	*count = names.size();
+	if (names.size() > 0) {
+		*attrnames = (t_symbol**)c74::max::sysmem_newptr(sizeof(t_symbol*) * *count);
+		for (auto i = 0; i < names.size(); i++) {
+			(*attrnames)[i] = c74::max::gensym(names[i].c_str());
+		}
+	}
+}
 
 #ifndef RNBO_MAX_NO_CREATE_MIN_WRAPPER
 #ifndef RNBO_WRAPPER_MAX_NAME

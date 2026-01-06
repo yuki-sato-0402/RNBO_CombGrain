@@ -8,10 +8,12 @@
 #ifndef RNBO_DataRefList_h
 #define RNBO_DataRefList_h
 
+#ifndef RNBO_NOSTL
+
 #include "RNBO_Utils.h"
 #include <vector>
+#include <string>
 
-#ifndef RNBO_NOSTDLIB
 namespace RNBO {
 	enum class DataRefType {
 		File,
@@ -78,6 +80,6 @@ namespace RNBO {
 		std::vector<DataRefType> _types;
 	};
 }
-#endif /* RNBO_NOSTDLIB */
+#endif // RNBO_NOSTL
 
 #endif /* RNBO_DataRefList_h */

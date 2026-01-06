@@ -8,87 +8,99 @@ CustomAudioEditor::CustomAudioEditor (CustomAudioProcessor& p, juce::AudioProces
     reverseButton.setButtonText("reverse");
     reverseButtonAattachment.reset (new ButtonAttachment (valueTreeState, "Reverse", reverseButton));
     
-    addAndMakeVisible(dial1Slider);
-    dial1Attachment.reset (new SliderAttachment (valueTreeState, "Mix", dial1Slider));
-    dial1Slider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    dial1Slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, dial1Slider.getTextBoxWidth(), dial1Slider.getTextBoxHeight());
-    dial1Slider.setTextValueSuffix (" %");
-    dial1Slider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
-    dial1Slider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::darkorange.withAlpha(0.75f));
-    dial1Slider.setColour(juce::Slider::thumbColourId , juce::Colours::darkorange.brighter(1.5));
-    dial1Slider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
-    dial1Slider.setColour(juce::Slider::textBoxOutlineColourId , juce::Colours::white);
+    addAndMakeVisible(MixDial);
+    MixDialAttachment.reset (new SliderAttachment (valueTreeState, "Mix", MixDial));
+    MixDial.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    MixDial.setTextBoxStyle (juce::Slider::TextBoxBelow, false, MixDial.getTextBoxWidth(), MixDial.getTextBoxHeight());
+    MixDial.setTextValueSuffix (" %");
+    MixDial.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
+    MixDial.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::darkorange.withAlpha(0.75f));
+    MixDial.setColour(juce::Slider::thumbColourId , juce::Colours::darkorange.brighter(1.5));
+    MixDial.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
+    MixDial.setColour(juce::Slider::textBoxOutlineColourId , juce::Colours::white);
     
-    addAndMakeVisible(label1);
-    label1.setText ("Mix", juce::dontSendNotification);
-    label1.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(MixLabel);
+    addAndMakeVisible(MixLabel);
+    MixLabel.setText ("Mix", juce::dontSendNotification);
+    MixLabel.setJustificationType(juce::Justification::centred);
     
-
-    addAndMakeVisible(dial2Slider);
-    dial2Attachment.reset (new SliderAttachment (valueTreeState, "grainSpeed", dial2Slider));
-    dial2Slider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    dial2Slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, dial2Slider.getTextBoxWidth(), dial2Slider.getTextBoxHeight());
-    dial2Slider.setTextValueSuffix (" Hz");
-    dial2Slider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
-    dial2Slider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::darkorange.withAlpha(0.75f));
-    dial2Slider.setColour(juce::Slider::thumbColourId , juce::Colours::darkorange.brighter(1.5));
-    dial2Slider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
-    dial2Slider.setColour(juce::Slider::textBoxOutlineColourId , juce::Colours::white);
+    addAndMakeVisible(grainSpeedDial);
+    grainSpeedDialAttachment.reset (new SliderAttachment (valueTreeState, "grainSpeed", grainSpeedDial));
+    grainSpeedDial.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    grainSpeedDial.setTextBoxStyle (juce::Slider::TextBoxBelow, false, grainSpeedDial.getTextBoxWidth(), grainSpeedDial.getTextBoxHeight());
+    grainSpeedDial.setTextValueSuffix (" Hz");
+    grainSpeedDial.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
+    grainSpeedDial.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::darkorange.withAlpha(0.75f));
+    grainSpeedDial.setColour(juce::Slider::thumbColourId , juce::Colours::darkorange.brighter(1.5));
+    grainSpeedDial.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
+    grainSpeedDial.setColour(juce::Slider::textBoxOutlineColourId , juce::Colours::white);
    
+    addAndMakeVisible(grainSpeedLabel);
+    grainSpeedLabel.setText ("grainSpeed", juce::dontSendNotification);
+    grainSpeedLabel.setJustificationType(juce::Justification::centred);
 
-    addAndMakeVisible(label2);
-    label2.setText ("grainSpeed", juce::dontSendNotification);
-    label2.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(densityDial);
+    densityDialAttachment.reset (new SliderAttachment (valueTreeState, "density", densityDial));
+    densityDial.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);     
+    densityDial.setTextBoxStyle (juce::Slider::TextBoxBelow, false, densityDial.getTextBoxWidth(), densityDial.getTextBoxHeight());
+    densityDial.setTextValueSuffix (" %");
+    densityDial.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
+    densityDial.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::darkorange.withAlpha(0.75f));
+    densityDial.setColour(juce::Slider::thumbColourId , juce::Colours::darkorange.brighter(1.5));
+    densityDial.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
+    densityDial.setColour(juce::Slider::textBoxOutlineColourId , juce::Colours::white); 
+
+    addAndMakeVisible(densityLabel);
+    densityLabel.setText ("density", juce::dontSendNotification);
+    densityLabel.setJustificationType(juce::Justification::centred);
     
 
-    addAndMakeVisible(dial3Slider);
-    dial3Attachment.reset (new SliderAttachment (valueTreeState, "movDur", dial3Slider));
-    dial3Slider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);     
-    dial3Slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, dial3Slider.getTextBoxWidth(), dial3Slider.getTextBoxHeight());
-    dial3Slider.setTextValueSuffix (" ms");
-    dial3Slider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
-    dial3Slider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::darkorange.withAlpha(0.75f));
-    dial3Slider.setColour(juce::Slider::thumbColourId , juce::Colours::darkorange.brighter(1.5));
-    dial3Slider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
-    dial3Slider.setColour(juce::Slider::textBoxOutlineColourId , juce::Colours::white);
+    addAndMakeVisible(movDurDial);
+    movDurDialAttachment.reset (new SliderAttachment (valueTreeState, "movDur", movDurDial));
+    movDurDial.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);     
+    movDurDial.setTextBoxStyle (juce::Slider::TextBoxBelow, false, movDurDial.getTextBoxWidth(), movDurDial.getTextBoxHeight());
+    movDurDial.setTextValueSuffix (" ms");
+    movDurDial.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
+    movDurDial.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::darkorange.withAlpha(0.75f));
+    movDurDial.setColour(juce::Slider::thumbColourId , juce::Colours::darkorange.brighter(1.5));
+    movDurDial.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
+    movDurDial.setColour(juce::Slider::textBoxOutlineColourId , juce::Colours::white);
     
 
-    addAndMakeVisible(label3);
-    label3.setText ("movDur", juce::dontSendNotification);
-    label3.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(movDurLabel);
+    movDurLabel.setText ("movDur", juce::dontSendNotification);
+    movDurLabel.setJustificationType(juce::Justification::centred);
 
 
-    addAndMakeVisible(dial4Slider);
-    dial4Attachment.reset (new SliderAttachment (valueTreeState, "delTime", dial4Slider));
-    dial4Slider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);     
-    dial4Slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, dial4Slider.getTextBoxWidth(), dial4Slider.getTextBoxHeight());
-    dial4Slider.setTextValueSuffix (" ms");
-    dial4Slider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
-    dial4Slider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::darkorange.withAlpha(0.75f));
-    dial4Slider.setColour(juce::Slider::thumbColourId , juce::Colours::darkorange.brighter(1.5));
-    dial4Slider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
-    dial4Slider.setColour(juce::Slider::textBoxOutlineColourId , juce::Colours::white);
- 
-    addAndMakeVisible(label4);
-    label4.setText ("delTime", juce::dontSendNotification);
-    label4.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(delTimeDial);
+    delTimeDialAttachment.reset (new SliderAttachment (valueTreeState, "delTime", delTimeDial));
+    delTimeDial.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);     
+    delTimeDial.setTextBoxStyle (juce::Slider::TextBoxBelow, false, delTimeDial.getTextBoxWidth(), delTimeDial.getTextBoxHeight());
+    delTimeDial.setTextValueSuffix (" ms");
+    delTimeDial.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
+    delTimeDial.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::darkorange.withAlpha(0.75f));
+    delTimeDial.setColour(juce::Slider::thumbColourId , juce::Colours::darkorange.brighter(1.5));
+    delTimeDial.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
+    delTimeDial.setColour(juce::Slider::textBoxOutlineColourId , juce::Colours::white);
 
+    addAndMakeVisible(delTimeLabel);
+    delTimeLabel.setText ("delTime", juce::dontSendNotification);
+    delTimeLabel.setJustificationType(juce::Justification::centred);
 
-    addAndMakeVisible(dial5Slider);
-    dial5Attachment.reset (new SliderAttachment (valueTreeState, "feedCoe", dial5Slider));
-    dial5Slider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);     
-    dial5Slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, dial5Slider.getTextBoxWidth(), dial5Slider.getTextBoxHeight());
-    dial5Slider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
-    dial5Slider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
-    dial5Slider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::darkorange.withAlpha(0.75f));
-    dial5Slider.setColour(juce::Slider::thumbColourId , juce::Colours::darkorange.brighter(1.5));
-    dial5Slider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
-    dial5Slider.setColour(juce::Slider::textBoxOutlineColourId , juce::Colours::white);
-    
-    addAndMakeVisible(label5);
-    label5.setText ("feedCoe", juce::dontSendNotification);
-    label5.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(feedCoeDial);
+    feedCoeDialAttachment.reset (new SliderAttachment (valueTreeState, "feedCoe", feedCoeDial));
+    feedCoeDial.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);     
+    feedCoeDial.setTextBoxStyle (juce::Slider::TextBoxBelow, false, feedCoeDial.getTextBoxWidth(), feedCoeDial.getTextBoxHeight());
+    feedCoeDial.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
+    feedCoeDial.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
+    feedCoeDial.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::darkorange.withAlpha(0.75f));
+    feedCoeDial.setColour(juce::Slider::thumbColourId , juce::Colours::darkorange.brighter(1.5));
+    feedCoeDial.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
+    feedCoeDial.setColour(juce::Slider::textBoxOutlineColourId , juce::Colours::white);
 
+    addAndMakeVisible(feedCoeLabel);
+    feedCoeLabel.setText ("feedCoe", juce::dontSendNotification);
+    feedCoeLabel.setJustificationType(juce::Justification::centred);
     setSize(600, 500);
 }
 
@@ -102,24 +114,23 @@ void CustomAudioEditor::resized()
 {
     auto area = getLocalBounds();
 
-    const int componentWidth1 = (area.getWidth() - 80)/3;
-    const int componentHeight = (area.getHeight() - 120) / 2;
-    const int paddingW = 20;
-    const int paddingH = 40;
+    const int componentWidth1 = (area.getWidth() - 100)/4;
+    const int componentHeight = (area.getHeight() - 60) / 4;
+    const int padding = 20;
 
-    dial1Slider.setBounds(paddingW,  paddingH , componentWidth1 ,  componentHeight);
-    dial2Slider.setBounds(dial1Slider.getRight() + paddingW, paddingH, componentWidth1 ,  componentHeight);
-    dial3Slider.setBounds(dial2Slider.getRight() + paddingW,  paddingH, componentWidth1 ,  componentHeight);
+    MixDial.setBounds(padding, padding, componentWidth1 ,  componentHeight);
+    grainSpeedDial.setBounds(MixDial.getRight() + padding, padding, componentWidth1 ,  componentHeight);
+    densityDial.setBounds(grainSpeedDial.getRight() + padding,  padding, componentWidth1 ,  componentHeight);
+    movDurDial.setBounds(densityDial.getRight() + padding,  padding, componentWidth1 ,  componentHeight);
+    reverseButton.setBounds(padding,  MixDial.getBottom() + padding, componentWidth1 ,  componentHeight);
+    delTimeDial.setBounds(reverseButton.getRight()  + padding, MixDial.getBottom() + padding, componentWidth1 ,  componentHeight);
+    feedCoeDial.setBounds(delTimeDial.getRight() + padding,  MixDial.getBottom() + padding, componentWidth1 ,  componentHeight);
 
-    reverseButton.setBounds(paddingW,  dial1Slider.getBottom() + paddingH, componentWidth1 ,  componentHeight);
-    dial4Slider.setBounds(reverseButton.getRight()  + paddingW, dial1Slider.getBottom() + paddingH, componentWidth1 ,  componentHeight);
-    dial5Slider.setBounds(dial4Slider.getRight() + paddingW,  dial1Slider.getBottom() + paddingH, componentWidth1 ,  componentHeight);
-
-
-    label1.setBounds(dial1Slider.getX(), dial1Slider.getY()-20, dial1Slider.getWidth(),dial1Slider.getTextBoxHeight() );
-    label2.setBounds(dial2Slider.getX(), dial2Slider.getY()-20, dial2Slider.getWidth(),dial2Slider.getTextBoxHeight() );
-    label3.setBounds(dial3Slider.getX(), dial3Slider.getY()-20, dial3Slider.getWidth(),dial3Slider.getTextBoxHeight() );
-    label4.setBounds(dial4Slider.getX(), dial4Slider.getY()-20, dial4Slider.getWidth(),dial4Slider.getTextBoxHeight() );
-    label5.setBounds(dial5Slider.getX(), dial5Slider.getY()-20, dial5Slider.getWidth(),dial5Slider.getTextBoxHeight() );
-
+    MixLabel.setBounds(MixDial.getX(), MixDial.getY()-10, MixDial.getWidth(),MixDial.getTextBoxHeight() );
+    grainSpeedLabel.setBounds(grainSpeedDial.getX(), grainSpeedDial.getY()-10, grainSpeedDial.getWidth(),grainSpeedDial.getTextBoxHeight() );
+    densityLabel.setBounds(densityDial.getX(), densityDial.getY()-10, densityDial.getWidth(),densityDial.getTextBoxHeight() );
+    movDurLabel.setBounds(movDurDial.getX(), movDurDial.getY()-10, movDurDial.getWidth(),movDurDial.getTextBoxHeight() );
+    delTimeLabel.setBounds(delTimeDial.getX(), delTimeDial.getY()-10, delTimeDial.getWidth(),delTimeDial.getTextBoxHeight() );
+    feedCoeLabel.setBounds(feedCoeDial.getX(), feedCoeDial.getY()-10, feedCoeDial.getWidth(),feedCoeDial.getTextBoxHeight() );
+  
 }

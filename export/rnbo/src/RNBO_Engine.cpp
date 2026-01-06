@@ -117,6 +117,14 @@ namespace RNBO {
 		for (auto pi : _registeredParameterInterfaces) {
 			pi->deactivate();
 		}
+
+        for (auto ref = _externalDataRefMap.begin(); ref != _externalDataRefMap.end();) {
+            auto callback = ref->second->getCallback();
+            if (callback && ref->second->getData()) {
+                callback(ref->second->getMemoryId(), ref->second->getData());
+            }
+            ref = _externalDataRefMap.erase(ref);
+        }
 	}
 
 	bool Engine::setPatcher(UniquePtr<PatcherInterface> patcher) {
@@ -138,7 +146,7 @@ namespace RNBO {
 
 		PatcherState state;
 		// get the old patcher state
-		_patcher->getState(state);
+		_patcher->extractState(state);
 		number previousSampleRate = _patcher->getSampleRate();
 		Index previousBlockSize = _patcher->getMaxBlockSize();
 		// move all scheduledEvents that have event targets to the _currentEventsList
@@ -376,9 +384,7 @@ namespace RNBO {
 		ProcessLocker lock(this);
 
 		if (!lock.didLock()) {
-			RNBO_ASSERT(false);
-			// return an empty preset
-			PresetPtr preset = std::make_shared<Preset>();
+			PresetPtr preset = std::make_shared<DummyPreset>();
 			return preset;
 		}
 		else {
@@ -432,6 +438,20 @@ namespace RNBO {
 
 		RNBO_ASSERT(_externalDataRefs.size() == _externalDataRefMap.size());
 	}
+
+    void Engine::scheduleClockEvent(EventTarget* eventTarget, ClockId clockIndex, MillisecondTime time) {
+        scheduleEvent(ClockEvent(clockIndex, time, eventTarget));
+        if (_scheduleCallback && !_inSetPatcher) {
+            _scheduleCallback(time);
+        }
+    }
+
+    void Engine::scheduleClockEventWithValue(EventTarget* eventTarget, ClockId clockIndex, MillisecondTime time, ParameterValue value) {
+        scheduleEvent(ClockEvent(clockIndex, time, value, eventTarget));
+        if (_scheduleCallback && !_inSetPatcher) {
+            _scheduleCallback(time);
+        }
+    }
 
 	void Engine::beginProcessDataRefs() {
 		if (_externalDataHandler && !_externalDataRefs.empty()) {

@@ -6,8 +6,9 @@
 //
 
 #include "RNBO_DataRefList.h"
+#include "RNBO_Std.h"
 
-#ifndef RNBO_NOSTDLIB
+#ifndef RNBO_NOSTL
 
 RNBO_PUSH_DISABLE_WARNINGS
 #include "3rdparty/json/json.hpp"
@@ -64,4 +65,4 @@ DataRefType DataRefList::datarefTypeAtIndex(size_t index)
 
 }
 
-#endif /* RNBO_NOPRESETS */
+#endif // RNBO_NOSTL

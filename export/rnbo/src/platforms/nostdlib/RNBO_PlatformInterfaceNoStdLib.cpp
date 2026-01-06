@@ -69,7 +69,6 @@ namespace RNBO {
 	public:
 		PlatformInterfaceNoStdLib()
 		{
-			Platform::set(this);
 		}
 
 		~PlatformInterfaceNoStdLib() override
@@ -263,8 +262,6 @@ namespace RNBO {
 			}
 		}
 	};
-
-	PlatformInterfaceNoStdLib platformInstance;
 
 } // namespace RNBO
 

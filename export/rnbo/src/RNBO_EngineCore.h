@@ -258,7 +258,7 @@ namespace RNBO {
 			}
 		}
 
-		void sendTimeSignatureEvent(int numerator, int denominator) override {
+		void sendTimeSignatureEvent(Int numerator, Int denominator) override {
 			for (auto pi : _activeParameterInterfaces) {
 				pi->pushOutgoingEvent(TimeSignatureEvent(_currentTime, numerator, denominator));
 			}
@@ -310,8 +310,14 @@ namespace RNBO {
 		void notifyOutgoingEvents() {
 			for (auto pi : _activeParameterInterfaces) {
 				pi->pushDirtyParameters(_currentTime);
+                if (_presetTouched) {
+#ifndef RNBO_NOPRESETS
+                    pi->pushOutgoingEvent(PresetEvent(_currentTime, PresetEvent::Touched, nullptr, nullptr));
+#endif
+                }
 				pi->notifyOutgoingEvents();
 			}
+            _presetTouched = false;
 		}
 
 		MillisecondTime getCurrentTime() override { return _currentTime; }
@@ -408,6 +414,11 @@ namespace RNBO {
 			scheduleEvent(StartupEvent(_currentTime, StartupEvent::End));
 
 			_paramNameHash.update(_patcher.get());
+
+			// we need to update the size of the shadow value array and update shadow values in the ParameterInterfaces
+			for (auto&& pi : _activeParameterInterfaces) {
+				pi->refreshParameterCountAndValues();
+			}
 
 			if (_patcherChangedHandler) {
 				_patcherChangedHandler->patcherChanged();
@@ -610,11 +621,13 @@ namespace RNBO {
 
 		virtual void setPresetSync(UniquePresetPtr preset)
 		{
+#ifndef RNBO_NOPRESETS
 			_settingPreset = true;
 			sendOutgoingEvent(PresetEvent(_currentTime, PresetEvent::SettingBegin));
 			_patcher->setPreset(_currentTime, *preset);
 			sendOutgoingEvent(PresetEvent(_currentTime, PresetEvent::SettingEnd));
 			_settingPreset = false;
+#endif // RNBO_NOPRESETS
 		}
 
 		virtual ConstPresetPtr getPresetSync() {
@@ -624,9 +637,11 @@ namespace RNBO {
 		}
 
 		void presetTouched() override {
+#ifndef RNBO_NOPRESETS
 			if (!_settingPreset) {
-				sendOutgoingEvent(PresetEvent(_currentTime, PresetEvent::Touched, nullptr, nullptr));
+                _presetTouched = true;
 			}
+#endif // RNBO_NOPRESETS
 		}
 
 		virtual void beginProcessDataRefs() {}
@@ -635,6 +650,10 @@ namespace RNBO {
 		void setScheduleCallback(ScheduleCallback callback) override {
 			_scheduleCallback = callback;
 		}
+
+        bool hasCurrentEvent() const {
+            return _eventContext != nullptr;
+        }
 
 	protected:
 
@@ -681,14 +700,15 @@ namespace RNBO {
 		// only to be used from audio thread
 		bool							_inAudioProcess;
 
-#ifdef USE_STD_VECTOR
+#ifndef RNBO_NOSTL
 		std::vector<ParameterEventInterfaceImpl*>	_activeParameterInterfaces;
 #else
 		Vector<ParameterEventInterfaceImpl*>		_activeParameterInterfaces;
-#endif
+#endif // RNBO_NOSTL
 
 		PatcherChangedHandler*			_patcherChangedHandler = nullptr;
 		ParamNameHash					_paramNameHash;
+        ScheduleCallback                _scheduleCallback = nullptr;
 
 	private:
 
@@ -751,7 +771,7 @@ namespace RNBO {
 
 		MidiEventList* 					_midiOutput = nullptr;
 
-		ScheduleCallback				_scheduleCallback = nullptr;
+        bool                            _presetTouched = false;
 	};
 
 } // namespace RNBO

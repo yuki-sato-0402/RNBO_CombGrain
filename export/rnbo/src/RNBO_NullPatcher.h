@@ -212,13 +212,20 @@ namespace RNBO {
 			RNBO_UNUSED(beatTime);
 		}
 
-		void processTimeSignatureEvent(MillisecondTime time, int numerator, int denominator) override {
+		void processTimeSignatureEvent(MillisecondTime time, Int numerator, Int denominator) override {
 			RNBO_UNUSED(time);
 			RNBO_UNUSED(numerator);
 			RNBO_UNUSED(denominator);
 		}
 
-		void getState(PatcherStateInterface& state) override {
+		void processBBUEvent(MillisecondTime time, number bars, number beats, number units) override {
+			RNBO_UNUSED(time);
+			RNBO_UNUSED(bars);
+			RNBO_UNUSED(beats);
+			RNBO_UNUSED(units);
+		}
+
+		void extractState(PatcherStateInterface& state) override {
 			RNBO_UNUSED(state);
 		}
 
@@ -234,6 +241,8 @@ namespace RNBO {
 			RNBO_UNUSED(normalizedValue);
 			return 0;
 		}
+
+		MillisecondTime getPatcherTime() const override { return 0; }
 
 	private:
 		number	_sampleRate = 0;

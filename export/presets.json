@@ -2,17 +2,20 @@
   {
     "name": "untitled",
     "preset": {
-      "FeedCoe": {
-        "value": 0.5
-      },
       "Mix": {
-        "value": 50
-      },
-      "delTime": {
         "value": 100
       },
+      "delTime": {
+        "value": 250
+      },
+      "density": {
+        "value": 40
+      },
+      "feedCoe": {
+        "value": 0.5
+      },
       "grainSpeed": {
-        "value": 1
+        "value": 10
       },
       "movDur": {
         "value": 500
