@@ -131,7 +131,6 @@ void process(
     this->updateTime(this->getEngine()->getCurrentTime(), (ENGINE*)nullptr, true);
     SampleValue * out1 = (numOutputs >= 1 && outputs[0] ? outputs[0] : this->dummyBuffer);
     SampleValue * out2 = (numOutputs >= 2 && outputs[1] ? outputs[1] : this->dummyBuffer);
-    SampleValue * out3 = (numOutputs >= 3 && outputs[2] ? outputs[2] : this->dummyBuffer);
     const SampleValue * in1 = (numInputs >= 1 && inputs[0] ? inputs[0] : this->zeroBuffer);
     const SampleValue * in2 = (numInputs >= 2 && inputs[1] ? inputs[1] : this->zeroBuffer);
 
@@ -139,19 +138,17 @@ void process(
         in1,
         in2,
         this->gen_01_movDur,
-        this->gen_01_grainSpeed,
+        this->gen_01_grainSize,
         this->gen_01_reverse,
         this->gen_01_Mix,
         this->gen_01_delTime,
         this->gen_01_feedCoe,
         this->gen_01_density,
         out1,
-        this->dummyBuffer,
+        out2,
         n
     );
 
-    this->intnum_tilde_01_perform(this->intnum_tilde_01_value, out2, n);
-    this->intnum_tilde_02_perform(this->intnum_tilde_02_value, out3, n);
     this->stackprotect_perform(n);
     this->globaltransport_advance();
     this->advanceTime((ENGINE*)nullptr);
@@ -180,6 +177,8 @@ void prepareToProcess(number sampleRate, Index maxBlockSize, bool force) {
         this->invsr = 1 / sampleRate;
     }
 
+    this->data_01_dspsetup(forceDSPSetup);
+    this->data_02_dspsetup(forceDSPSetup);
     this->gen_01_dspsetup(forceDSPSetup);
     this->globaltransport_dspsetup(forceDSPSetup);
 
@@ -200,22 +199,27 @@ Index getNumInputChannels() const {
 }
 
 Index getNumOutputChannels() const {
-    return 3;
+    return 2;
 }
 
 DataRef* getDataRef(DataRefIndex index)  {
     switch (index) {
     case 0:
         {
-        return addressOf(this->RingBuff);
+        return addressOf(this->ringBuffIndex);
         break;
         }
     case 1:
         {
-        return addressOf(this->gen_01_delL_bufferobj);
+        return addressOf(this->ringBuff);
         break;
         }
     case 2:
+        {
+        return addressOf(this->gen_01_delL_bufferobj);
+        break;
+        }
+    case 3:
         {
         return addressOf(this->gen_01_delR_bufferobj);
         break;
@@ -228,22 +232,29 @@ DataRef* getDataRef(DataRefIndex index)  {
 }
 
 DataRefIndex getNumDataRefs() const {
-    return 3;
+    return 4;
 }
 
 void processDataViewUpdate(DataRefIndex index, MillisecondTime time) {
     this->updateTime(time, (ENGINE*)nullptr);
 
     if (index == 0) {
-        this->gen_01_RingBuff = reInitDataView(this->gen_01_RingBuff, this->RingBuff);
-        this->gen_01_RingBuff_exprdata_buffer = reInitDataView(this->gen_01_RingBuff_exprdata_buffer, this->RingBuff);
+        this->data_01_buffer = reInitDataView(this->data_01_buffer, this->ringBuffIndex);
+        this->data_01_bufferUpdated();
+        this->gen_01_RingBuffIndex = reInitDataView(this->gen_01_RingBuffIndex, this->ringBuffIndex);
     }
 
     if (index == 1) {
-        this->gen_01_delL_buffer = reInitDataView(this->gen_01_delL_buffer, this->gen_01_delL_bufferobj);
+        this->data_02_buffer = reInitDataView(this->data_02_buffer, this->ringBuff);
+        this->data_02_bufferUpdated();
+        this->gen_01_RingBuff = reInitDataView(this->gen_01_RingBuff, this->ringBuff);
     }
 
     if (index == 2) {
+        this->gen_01_delL_buffer = reInitDataView(this->gen_01_delL_buffer, this->gen_01_delL_bufferobj);
+    }
+
+    if (index == 3) {
         this->gen_01_delR_buffer = reInitDataView(this->gen_01_delR_buffer, this->gen_01_delR_bufferobj);
     }
 }
@@ -251,38 +262,49 @@ void processDataViewUpdate(DataRefIndex index, MillisecondTime time) {
 void initialize() {
     RNBO_ASSERT(!this->_isInitialized);
 
-    this->RingBuff = initDataRef(
-        this->RingBuff,
+    this->ringBuffIndex = initDataRef(
+        this->ringBuffIndex,
         this->dataRefStrings->name0,
-        true,
+        false,
         this->dataRefStrings->file0,
         this->dataRefStrings->tag0
     );
 
-    this->gen_01_delL_bufferobj = initDataRef(
-        this->gen_01_delL_bufferobj,
+    this->ringBuff = initDataRef(
+        this->ringBuff,
         this->dataRefStrings->name1,
-        true,
+        false,
         this->dataRefStrings->file1,
         this->dataRefStrings->tag1
     );
 
-    this->gen_01_delR_bufferobj = initDataRef(
-        this->gen_01_delR_bufferobj,
+    this->gen_01_delL_bufferobj = initDataRef(
+        this->gen_01_delL_bufferobj,
         this->dataRefStrings->name2,
         true,
         this->dataRefStrings->file2,
         this->dataRefStrings->tag2
     );
 
+    this->gen_01_delR_bufferobj = initDataRef(
+        this->gen_01_delR_bufferobj,
+        this->dataRefStrings->name3,
+        true,
+        this->dataRefStrings->file3,
+        this->dataRefStrings->tag3
+    );
+
     this->assign_defaults();
     this->applyState();
-    this->RingBuff->setIndex(0);
-    this->gen_01_RingBuff = new SampleBuffer(this->RingBuff);
-    this->gen_01_RingBuff_exprdata_buffer = new Float64Buffer(this->RingBuff);
-    this->gen_01_delL_bufferobj->setIndex(1);
+    this->ringBuffIndex->setIndex(0);
+    this->data_01_buffer = new Float32Buffer(this->ringBuffIndex);
+    this->gen_01_RingBuffIndex = new Float32Buffer(this->ringBuffIndex);
+    this->ringBuff->setIndex(1);
+    this->data_02_buffer = new Float32Buffer(this->ringBuff);
+    this->gen_01_RingBuff = new Float32Buffer(this->ringBuff);
+    this->gen_01_delL_bufferobj->setIndex(2);
     this->gen_01_delL_buffer = new Float64Buffer(this->gen_01_delL_bufferobj);
-    this->gen_01_delR_bufferobj->setIndex(2);
+    this->gen_01_delR_bufferobj->setIndex(3);
     this->gen_01_delR_buffer = new Float64Buffer(this->gen_01_delR_bufferobj);
     this->initializeObjects();
     this->allocateDataRefs();
@@ -296,7 +318,7 @@ void getPreset(PatcherStateInterface& preset) {
     this->param_01_getPresetValue(getSubState(preset, "density"));
     this->param_02_getPresetValue(getSubState(preset, "Mix"));
     this->param_03_getPresetValue(getSubState(preset, "movDur"));
-    this->param_04_getPresetValue(getSubState(preset, "grainSpeed"));
+    this->param_04_getPresetValue(getSubState(preset, "grainSize"));
     this->param_05_getPresetValue(getSubState(preset, "feedCoe"));
     this->param_06_getPresetValue(getSubState(preset, "delTime"));
     this->param_07_getPresetValue(getSubState(preset, "reverse"));
@@ -307,7 +329,7 @@ void setPreset(MillisecondTime time, PatcherStateInterface& preset) {
     this->param_01_setPresetValue(getSubState(preset, "density"));
     this->param_02_setPresetValue(getSubState(preset, "Mix"));
     this->param_03_setPresetValue(getSubState(preset, "movDur"));
-    this->param_04_setPresetValue(getSubState(preset, "grainSpeed"));
+    this->param_04_setPresetValue(getSubState(preset, "grainSize"));
     this->param_05_setPresetValue(getSubState(preset, "feedCoe"));
     this->param_06_setPresetValue(getSubState(preset, "delTime"));
     this->param_07_setPresetValue(getSubState(preset, "reverse"));
@@ -432,7 +454,7 @@ ConstCharPointer getParameterName(ParameterIndex index) const {
         }
     case 3:
         {
-        return "grainSpeed";
+        return "grainSize";
         }
     case 4:
         {
@@ -469,7 +491,7 @@ ConstCharPointer getParameterId(ParameterIndex index) const {
         }
     case 3:
         {
-        return "grainSpeed";
+        return "grainSize";
         }
     case 4:
         {
@@ -553,9 +575,9 @@ void getParameterInfo(ParameterIndex index, ParameterInfo * info) const {
         case 3:
             {
             info->type = ParameterTypeNumber;
-            info->initialValue = 1;
-            info->min = 0.1;
-            info->max = 30;
+            info->initialValue = 1000;
+            info->min = 10;
+            info->max = 2000;
             info->exponent = 1;
             info->steps = 0;
             info->debug = false;
@@ -689,8 +711,8 @@ ParameterValue convertToNormalizedParameterValue(ParameterIndex index, Parameter
     case 3:
         {
         {
-            value = (value < 0.1 ? 0.1 : (value > 30 ? 30 : value));
-            ParameterValue normalizedValue = (value - 0.1) / (30 - 0.1);
+            value = (value < 10 ? 10 : (value > 2000 ? 2000 : value));
+            ParameterValue normalizedValue = (value - 10) / (2000 - 10);
             return normalizedValue;
         }
         }
@@ -757,7 +779,7 @@ ParameterValue convertFromNormalizedParameterValue(ParameterIndex index, Paramet
         {
         {
             {
-                return 0.1 + value * (30 - 0.1);
+                return 10 + value * (2000 - 10);
             }
         }
         }
@@ -906,6 +928,10 @@ template<typename LISTTYPE = list> void listswapelements(LISTTYPE& arr, Int a, I
     arr[(Index)b] = tmp;
 }
 
+number mstosamps(MillisecondTime ms) {
+    return ms * this->sr * 0.001;
+}
+
 inline number linearinterp(number frac, number x, number y) {
     return x + (y - x) * frac;
 }
@@ -981,10 +1007,6 @@ inline number cosT8(number r) {
 inline number cosineinterp(number frac, number x, number y) {
     number a2 = (1.0 - this->cosT8(frac * 3.14159265358979323846)) / (number)2.0;
     return x * (1.0 - a2) + y * a2;
-}
-
-number mstosamps(MillisecondTime ms) {
-    return ms * this->sr * 0.001;
 }
 
 number maximum(number x, number y) {
@@ -1143,6 +1165,30 @@ number scale(
 
     value = value * outdiff + lowout;
     return value;
+}
+
+template<typename BUFFERTYPE> void poke_default(
+    BUFFERTYPE& buffer,
+    SampleValue value,
+    SampleValue sampleIndex,
+    Int channel,
+    number overdub
+) {
+    number bufferSize = buffer->getSize();
+    const Index bufferChannels = (const Index)(buffer->getChannels());
+
+    if (bufferSize > 0 && (5 != 5 || (sampleIndex >= 0 && sampleIndex < bufferSize)) && (5 != 5 || (channel >= 0 && channel < bufferChannels))) {
+        if (overdub != 0) {
+            number currentValue = buffer->getSample(channel, sampleIndex);
+
+            {
+                value = value + currentValue * overdub;
+            }
+        }
+
+        buffer->setSample(channel, sampleIndex, value);
+        buffer->setTouched(true);
+    }
 }
 
 template<typename BUFFERTYPE> array<SampleValue, 1 + 1> wave_boundmode_wrap_interp_cubic(
@@ -1347,7 +1393,7 @@ void param_04_value_set(number v) {
         this->param_04_lastValue = this->param_04_value;
     }
 
-    this->gen_01_grainSpeed_set(v);
+    this->gen_01_grainSize_set(v);
 }
 
 void param_05_value_set(number v) {
@@ -1359,6 +1405,8 @@ void param_05_value_set(number v) {
         this->getEngine()->presetTouched();
         this->param_05_lastValue = this->param_05_value;
     }
+
+    this->gen_01_feedCoe_set(v);
 }
 
 void param_06_value_set(number v) {
@@ -1420,14 +1468,26 @@ void zeroDataRef(DataRef& ref) {
 }
 
 void allocateDataRefs() {
-    this->gen_01_RingBuff = this->gen_01_RingBuff->allocateIfNeeded();
-    this->gen_01_RingBuff_exprdata_buffer = this->gen_01_RingBuff_exprdata_buffer->allocateIfNeeded();
+    this->data_01_buffer->requestSize(1, 2);
+    this->data_01_buffer->setSampleRate(this->sr);
+    this->data_01_buffer = this->data_01_buffer->allocateIfNeeded();
+    this->gen_01_RingBuffIndex = this->gen_01_RingBuffIndex->allocateIfNeeded();
 
-    if (this->RingBuff->hasRequestedSize()) {
-        if (this->RingBuff->wantsFill())
-            this->zeroDataRef(this->RingBuff);
+    if (this->ringBuffIndex->hasRequestedSize()) {
+        if (this->ringBuffIndex->wantsFill())
+            this->zeroDataRef(this->ringBuffIndex);
 
         this->getEngine()->sendDataRefUpdated(0);
+    }
+
+    this->data_02_buffer = this->data_02_buffer->allocateIfNeeded();
+    this->gen_01_RingBuff = this->gen_01_RingBuff->allocateIfNeeded();
+
+    if (this->ringBuff->hasRequestedSize()) {
+        if (this->ringBuff->wantsFill())
+            this->zeroDataRef(this->ringBuff);
+
+        this->getEngine()->sendDataRefUpdated(1);
     }
 
     this->gen_01_delL_buffer = this->gen_01_delL_buffer->allocateIfNeeded();
@@ -1436,7 +1496,7 @@ void allocateDataRefs() {
         if (this->gen_01_delL_bufferobj->wantsFill())
             this->zeroDataRef(this->gen_01_delL_bufferobj);
 
-        this->getEngine()->sendDataRefUpdated(1);
+        this->getEngine()->sendDataRefUpdated(2);
     }
 
     this->gen_01_delR_buffer = this->gen_01_delR_buffer->allocateIfNeeded();
@@ -1445,12 +1505,13 @@ void allocateDataRefs() {
         if (this->gen_01_delR_bufferobj->wantsFill())
             this->zeroDataRef(this->gen_01_delR_bufferobj);
 
-        this->getEngine()->sendDataRefUpdated(2);
+        this->getEngine()->sendDataRefUpdated(3);
     }
 }
 
 void initializeObjects() {
-    this->gen_01_RingBuff_exprdata_init();
+    this->data_01_init();
+    this->data_02_init();
     this->gen_01_lastPhaseReader1_init();
     this->gen_01_lastPhaseReader2_init();
     this->gen_01_PhaseDiff1_init();
@@ -1563,17 +1624,21 @@ void gen_01_movDur_set(number v) {
 }
 
 number param_04_value_constrain(number v) const {
-    v = (v > 30 ? 30 : (v < 0.1 ? 0.1 : v));
+    v = (v > 2000 ? 2000 : (v < 10 ? 10 : v));
     return v;
 }
 
-void gen_01_grainSpeed_set(number v) {
-    this->gen_01_grainSpeed = v;
+void gen_01_grainSize_set(number v) {
+    this->gen_01_grainSize = v;
 }
 
 number param_05_value_constrain(number v) const {
     v = (v > 0.9 ? 0.9 : (v < 0.01 ? 0.01 : v));
     return v;
+}
+
+void gen_01_feedCoe_set(number v) {
+    this->gen_01_feedCoe = v;
 }
 
 number param_06_value_constrain(number v) const {
@@ -1826,7 +1891,7 @@ void gen_01_perform(
     const Sample * in1,
     const Sample * in2,
     number movDur,
-    number grainSpeed,
+    number grainSize,
     number reverse,
     number Mix,
     number delTime,
@@ -1836,12 +1901,11 @@ void gen_01_perform(
     SampleValue * out2,
     Index n
 ) {
-    RNBO_UNUSED(feedCoe);
     auto __gen_01_lastPhaseReader2_value = this->gen_01_lastPhaseReader2_value;
     auto __gen_01_lastPhaseReader1_value = this->gen_01_lastPhaseReader1_value;
     auto __gen_01_PhaseDiff2_value = this->gen_01_PhaseDiff2_value;
     auto __gen_01_PhaseDiff1_value = this->gen_01_PhaseDiff1_value;
-    auto grainSize_0 = this->mstosamps((grainSpeed == 0. ? 0. : (number)1000 / grainSpeed));
+    number grainSpeed_0 = (grainSize == 0. ? 0. : (number)1000 / grainSize);
     Index i;
 
     for (i = 0; i < (Index)n; i++) {
@@ -1861,15 +1925,15 @@ void gen_01_perform(
         MovCount3 = result_4[2];
         MovCount2 = result_4[1];
         MovCount1 = result_4[0];
-        number holdGrainSize1_6 = this->gen_01_latch_5_next(grainSize_0, __gen_01_PhaseDiff1_value >= 0.99);
-        number holdGrainSize2_8 = this->gen_01_latch_7_next(grainSize_0, __gen_01_PhaseDiff2_value >= 0.99);
+        number holdGrainSize1_6 = this->gen_01_latch_5_next(this->mstosamps(grainSize), __gen_01_PhaseDiff1_value >= 0.99);
+        number holdGrainSize2_8 = this->gen_01_latch_7_next(this->mstosamps(grainSize), __gen_01_PhaseDiff2_value >= 0.99);
 
         auto pos1_11 = this->scale(
             this->gen_01_sah_9_next(this->gen_01_noise_10_next(), MovCount1, 0),
             -1,
             1,
             0,
-            this->dim(this->gen_01_RingBuff) - 2 * holdGrainSize1_6,
+            this->dim(this->gen_01_RingBuff) - holdGrainSize1_6,
             1
         );
 
@@ -1878,7 +1942,7 @@ void gen_01_perform(
             -1,
             1,
             0,
-            this->dim(this->gen_01_RingBuff) - 2 * holdGrainSize2_8,
+            this->dim(this->gen_01_RingBuff) - holdGrainSize1_6,
             1
         );
 
@@ -1886,8 +1950,8 @@ void gen_01_perform(
             6.28318530717958647692 * ((this->mstosamps(movDur) == 0. ? 0. : MovCount1 / this->mstosamps(movDur)))
         );
 
-        number phaseReader1_17 = this->gen_01_phasor_16_next(grainSpeed, 0);
-        auto phaseReader2_19 = this->wrap(this->gen_01_phasor_18_next(grainSpeed, 0) + 0.5, 0, 1);
+        number phaseReader1_17 = this->gen_01_phasor_16_next(grainSpeed_0, 0);
+        auto phaseReader2_19 = this->wrap(this->gen_01_phasor_18_next(grainSpeed_0, 0) + 0.5, 0, 1);
         __gen_01_PhaseDiff1_value = __gen_01_lastPhaseReader1_value - phaseReader1_17;
         __gen_01_PhaseDiff2_value = __gen_01_lastPhaseReader2_value - phaseReader2_19;
         __gen_01_lastPhaseReader1_value = phaseReader1_17;
@@ -1904,10 +1968,16 @@ void gen_01_perform(
             phaseReader2_19 = 1 - phaseReader2_19;
         }
 
+        auto buffIndex1_30 = this->scale(phaseReader1_17, 0, 1, pos1_11, pos1_11 + holdGrainSize1_6, 1);
+        auto buffIndex2_31 = this->scale(phaseReader2_19, 0, 1, pos2_14, pos2_14 + holdGrainSize2_8, 1);
+        auto wrapedIndex1_32 = this->wrap(buffIndex1_30, 0, this->dim(this->gen_01_RingBuff));
+        auto wrapedIndex2_33 = this->wrap(buffIndex2_31, 0, this->dim(this->gen_01_RingBuff));
+        this->poke_default(this->gen_01_RingBuffIndex, wrapedIndex1_32 * flagWindow1_23, 0, 0, 0);
+        this->poke_default(this->gen_01_RingBuffIndex, wrapedIndex2_33 * flagWindow2_27, 0, 1, 0);
         number grainL = 0;
         number waveIndex1 = 0;
 
-        auto result_30 = this->wave_boundmode_wrap_interp_cubic(
+        auto result_34 = this->wave_boundmode_wrap_interp_cubic(
             this->gen_01_RingBuff,
             phaseReader1_17,
             pos1_11,
@@ -1915,12 +1985,12 @@ void gen_01_perform(
             0
         );
 
-        waveIndex1 = result_30[1];
-        grainL = result_30[0];
+        waveIndex1 = result_34[1];
+        grainL = result_34[0];
         number grainR = 0;
         number waveIndex2 = 0;
 
-        auto result_31 = this->wave_boundmode_wrap_interp_cubic(
+        auto result_35 = this->wave_boundmode_wrap_interp_cubic(
             this->gen_01_RingBuff,
             phaseReader2_19,
             pos2_14,
@@ -1928,31 +1998,31 @@ void gen_01_perform(
             1
         );
 
-        waveIndex2 = result_31[1];
-        grainR = result_31[0];
-        number windowGrainL_32 = grainL * moving_window_15 * grain_window1_28;
-        number windowGrainR_33 = grainR * moving_window_15 * grain_window2_29;
-        number delGrainL_34 = this->gen_01_delL_read(delTime, 1);
-        number feedGrainL_35 = delGrainL_34 * 0 + windowGrainL_32;
-        this->gen_01_delL_write(windowGrainL_32 + feedGrainL_35);
-        number delGrainR_36 = this->gen_01_delR_read(delTime, 1);
-        number feedGrainR_37 = delGrainR_36 * 0 + windowGrainR_33;
-        this->gen_01_delR_write(windowGrainR_33 + feedGrainR_37);
+        waveIndex2 = result_35[1];
+        grainR = result_35[0];
+        number windowGrainL_36 = grainL * moving_window_15 * grain_window1_28;
+        number windowGrainR_37 = grainR * moving_window_15 * grain_window2_29;
+        number delGrainL_38 = this->gen_01_delL_read(delTime, 1);
+        number feedGrainL_39 = delGrainL_38 * feedCoe + windowGrainL_36;
+        this->gen_01_delL_write(windowGrainL_36 + feedGrainL_39);
+        number delGrainR_40 = this->gen_01_delR_read(delTime, 1);
+        number feedGrainR_41 = delGrainR_40 * feedCoe + windowGrainR_37;
+        this->gen_01_delR_write(windowGrainR_37 + feedGrainR_41);
 
-        number expr_1_39 = this->__wrapped_op_clamp(
-            in1[(Index)i] + Mix * 0.01 * (this->gen_01_dcblock_38_next(feedGrainL_35 * 0.8, 0.9997) - in1[(Index)i]),
+        number expr_1_43 = this->__wrapped_op_clamp(
+            in1[(Index)i] + Mix * 0.01 * (this->gen_01_dcblock_42_next(feedGrainL_39 * 0.8, 0.9997) - in1[(Index)i]),
             -1,
             1
         );
 
-        number expr_2_41 = this->__wrapped_op_clamp(
-            in2[(Index)i] + Mix * 0.01 * (this->gen_01_dcblock_40_next(feedGrainR_37 * 0.8, 0.9997) - in2[(Index)i]),
+        number expr_2_45 = this->__wrapped_op_clamp(
+            in2[(Index)i] + Mix * 0.01 * (this->gen_01_dcblock_44_next(feedGrainR_41 * 0.8, 0.9997) - in2[(Index)i]),
             -1,
             1
         );
 
-        out2[(Index)i] = expr_2_41;
-        out1[(Index)i] = expr_1_39;
+        out2[(Index)i] = expr_2_45;
+        out1[(Index)i] = expr_1_43;
         this->gen_01_delL_step();
         this->gen_01_delR_step();
     }
@@ -1963,29 +2033,107 @@ void gen_01_perform(
     this->gen_01_lastPhaseReader2_value = __gen_01_lastPhaseReader2_value;
 }
 
-void intnum_tilde_01_perform(number value, SampleValue * out1, Index n) {
-    RNBO_UNUSED(value);
-    Index i;
-
-    for (i = 0; i < (Index)n; i++) {
-        out1[(Index)i] = trunc(0);
-    }
-}
-
-void intnum_tilde_02_perform(number value, SampleValue * out1, Index n) {
-    RNBO_UNUSED(value);
-    Index i;
-
-    for (i = 0; i < (Index)n; i++) {
-        out1[(Index)i] = trunc(0);
-    }
-}
-
 void stackprotect_perform(Index n) {
     RNBO_UNUSED(n);
     auto __stackprotect_count = this->stackprotect_count;
     __stackprotect_count = 0;
     this->stackprotect_count = __stackprotect_count;
+}
+
+void data_01_srout_set(number ) {}
+
+void data_01_chanout_set(number ) {}
+
+void data_01_sizeout_set(number v) {
+    this->data_01_sizeout = v;
+}
+
+void data_02_srout_set(number ) {}
+
+void data_02_chanout_set(number ) {}
+
+void data_02_sizeout_set(number v) {
+    this->data_02_sizeout = v;
+}
+
+void data_01_init() {
+    this->data_01_buffer->setWantsFill(true);
+}
+
+Index data_01_evaluateSizeExpr(number samplerate, number vectorsize) {
+    RNBO_UNUSED(vectorsize);
+    RNBO_UNUSED(samplerate);
+    number size = 0;
+    return (Index)(size);
+}
+
+void data_01_dspsetup(bool force) {
+    if ((bool)(this->data_01_setupDone) && (bool)(!(bool)(force)))
+        return;
+
+    if (this->data_01_sizemode == 2) {
+        this->data_01_buffer = this->data_01_buffer->setSize((Index)(this->mstosamps(this->data_01_sizems)));
+        updateDataRef(this, this->data_01_buffer);
+    } else if (this->data_01_sizemode == 3) {
+        this->data_01_buffer = this->data_01_buffer->setSize(this->data_01_evaluateSizeExpr(this->sr, this->vs));
+        updateDataRef(this, this->data_01_buffer);
+    }
+
+    this->data_01_setupDone = true;
+}
+
+void data_01_bufferUpdated() {
+    this->data_01_report();
+}
+
+void data_01_report() {
+    this->data_01_srout_set(this->data_01_buffer->getSampleRate());
+    this->data_01_chanout_set(this->data_01_buffer->getChannels());
+    this->data_01_sizeout_set(this->data_01_buffer->getSize());
+}
+
+void data_02_init() {
+    {
+        this->data_02_buffer->requestSize(this->data_02_evaluateSizeExpr(this->sr, this->vs), this->data_02_channels);
+    }
+
+    this->data_02_buffer->setWantsFill(true);
+}
+
+Index data_02_evaluateSizeExpr(number samplerate, number vectorsize) {
+    RNBO_UNUSED(vectorsize);
+    number size = 0;
+
+    {
+        size = samplerate * 2;
+    }
+
+    return (Index)(size);
+}
+
+void data_02_dspsetup(bool force) {
+    if ((bool)(this->data_02_setupDone) && (bool)(!(bool)(force)))
+        return;
+
+    if (this->data_02_sizemode == 2) {
+        this->data_02_buffer = this->data_02_buffer->setSize((Index)(this->mstosamps(this->data_02_sizems)));
+        updateDataRef(this, this->data_02_buffer);
+    } else if (this->data_02_sizemode == 3) {
+        this->data_02_buffer = this->data_02_buffer->setSize(this->data_02_evaluateSizeExpr(this->sr, this->vs));
+        updateDataRef(this, this->data_02_buffer);
+    }
+
+    this->data_02_setupDone = true;
+}
+
+void data_02_bufferUpdated() {
+    this->data_02_report();
+}
+
+void data_02_report() {
+    this->data_02_srout_set(this->data_02_buffer->getSampleRate());
+    this->data_02_chanout_set(this->data_02_buffer->getChannels());
+    this->data_02_sizeout_set(this->data_02_buffer->getSize());
 }
 
 void param_01_getPresetValue(PatcherStateInterface& preset) {
@@ -1998,24 +2146,6 @@ void param_01_setPresetValue(PatcherStateInterface& preset) {
 
     this->param_01_value_set(preset["value"]);
 }
-
-void gen_01_RingBuff_exprdata_init() {
-    number sizeInSamples = this->gen_01_RingBuff_exprdata_evaluateSizeExpr(this->sr, this->vs);
-    this->gen_01_RingBuff_exprdata_buffer->requestSize(sizeInSamples, 2);
-}
-
-void gen_01_RingBuff_exprdata_dspsetup() {
-    number sizeInSamples = this->gen_01_RingBuff_exprdata_evaluateSizeExpr(this->sr, this->vs);
-    this->gen_01_RingBuff_exprdata_buffer = this->gen_01_RingBuff_exprdata_buffer->setSize(sizeInSamples);
-    updateDataRef(this, this->gen_01_RingBuff_exprdata_buffer);
-}
-
-number gen_01_RingBuff_exprdata_evaluateSizeExpr(number samplerate, number vectorsize) {
-    RNBO_UNUSED(vectorsize);
-    return samplerate * 2;
-}
-
-void gen_01_RingBuff_exprdata_reset() {}
 
 number gen_01_lastPhaseReader1_getvalue() {
     return this->gen_01_lastPhaseReader1_value;
@@ -2599,38 +2729,38 @@ void gen_01_latch_26_reset() {
     this->gen_01_latch_26_value = 0;
 }
 
-number gen_01_dcblock_38_next(number x, number gain) {
+number gen_01_dcblock_42_next(number x, number gain) {
     RNBO_UNUSED(gain);
-    number y = x - this->gen_01_dcblock_38_xm1 + this->gen_01_dcblock_38_ym1 * 0.9997;
-    this->gen_01_dcblock_38_xm1 = x;
-    this->gen_01_dcblock_38_ym1 = y;
+    number y = x - this->gen_01_dcblock_42_xm1 + this->gen_01_dcblock_42_ym1 * 0.9997;
+    this->gen_01_dcblock_42_xm1 = x;
+    this->gen_01_dcblock_42_ym1 = y;
     return y;
 }
 
-void gen_01_dcblock_38_reset() {
-    this->gen_01_dcblock_38_xm1 = 0;
-    this->gen_01_dcblock_38_ym1 = 0;
+void gen_01_dcblock_42_reset() {
+    this->gen_01_dcblock_42_xm1 = 0;
+    this->gen_01_dcblock_42_ym1 = 0;
 }
 
-void gen_01_dcblock_38_dspsetup() {
-    this->gen_01_dcblock_38_reset();
+void gen_01_dcblock_42_dspsetup() {
+    this->gen_01_dcblock_42_reset();
 }
 
-number gen_01_dcblock_40_next(number x, number gain) {
+number gen_01_dcblock_44_next(number x, number gain) {
     RNBO_UNUSED(gain);
-    number y = x - this->gen_01_dcblock_40_xm1 + this->gen_01_dcblock_40_ym1 * 0.9997;
-    this->gen_01_dcblock_40_xm1 = x;
-    this->gen_01_dcblock_40_ym1 = y;
+    number y = x - this->gen_01_dcblock_44_xm1 + this->gen_01_dcblock_44_ym1 * 0.9997;
+    this->gen_01_dcblock_44_xm1 = x;
+    this->gen_01_dcblock_44_ym1 = y;
     return y;
 }
 
-void gen_01_dcblock_40_reset() {
-    this->gen_01_dcblock_40_xm1 = 0;
-    this->gen_01_dcblock_40_ym1 = 0;
+void gen_01_dcblock_44_reset() {
+    this->gen_01_dcblock_44_xm1 = 0;
+    this->gen_01_dcblock_44_ym1 = 0;
 }
 
-void gen_01_dcblock_40_dspsetup() {
-    this->gen_01_dcblock_40_reset();
+void gen_01_dcblock_44_dspsetup() {
+    this->gen_01_dcblock_44_reset();
 }
 
 void gen_01_dspsetup(bool force) {
@@ -2638,7 +2768,6 @@ void gen_01_dspsetup(bool force) {
         return;
 
     this->gen_01_setupDone = true;
-    this->gen_01_RingBuff_exprdata_dspsetup();
     this->gen_01_delL_dspsetup();
     this->gen_01_delR_dspsetup();
     this->gen_01_latch_5_dspsetup();
@@ -2647,8 +2776,8 @@ void gen_01_dspsetup(bool force) {
     this->gen_01_phasor_18_dspsetup();
     this->gen_01_latch_22_dspsetup();
     this->gen_01_latch_26_dspsetup();
-    this->gen_01_dcblock_38_dspsetup();
-    this->gen_01_dcblock_40_dspsetup();
+    this->gen_01_dcblock_42_dspsetup();
+    this->gen_01_dcblock_44_dspsetup();
 }
 
 void param_02_getPresetValue(PatcherStateInterface& preset) {
@@ -2776,11 +2905,21 @@ void updateTime(MillisecondTime time, EXTERNALENGINE* engine, bool inProcess = f
 
 void assign_defaults()
 {
+    data_01_sizeout = 0;
+    data_01_size = 1;
+    data_01_sizems = 0;
+    data_01_normalize = 0.995;
+    data_01_channels = 2;
+    data_02_sizeout = 0;
+    data_02_size = 0;
+    data_02_sizems = 0;
+    data_02_normalize = 0.995;
+    data_02_channels = 2;
     param_01_value = 50;
     gen_01_in1 = 0;
     gen_01_in2 = 0;
     gen_01_movDur = 0;
-    gen_01_grainSpeed = 0;
+    gen_01_grainSize = 0;
     gen_01_reverse = 0;
     gen_01_Mix = 0;
     gen_01_delTime = 0;
@@ -2788,7 +2927,7 @@ void assign_defaults()
     gen_01_density = 0;
     param_02_value = 50;
     param_03_value = 500;
-    param_04_value = 1;
+    param_04_value = 1000;
     param_05_value = 0.5;
     param_06_value = 100;
     param_07_value = 0;
@@ -2828,8 +2967,6 @@ void assign_defaults()
     expr_06_in1 = 0;
     expr_06_in2 = 0.007874015748;
     expr_06_out1 = 0;
-    intnum_tilde_01_value = 0;
-    intnum_tilde_02_value = 0;
     _currentTime = 0;
     audioProcessSampleCount = 0;
     sampleOffsetIntoNextAudioBuffer = 0;
@@ -2840,6 +2977,10 @@ void assign_defaults()
     maxvs = 0;
     sr = 44100;
     invsr = 0.000022675736961451248;
+    data_01_sizemode = 1;
+    data_01_setupDone = false;
+    data_02_sizemode = 3;
+    data_02_setupDone = false;
     param_01_lastValue = 0;
     gen_01_lastPhaseReader1_value = 0;
     gen_01_lastPhaseReader2_value = 0;
@@ -2871,10 +3012,10 @@ void assign_defaults()
     gen_01_phasor_18_conv = 0;
     gen_01_latch_22_value = 0;
     gen_01_latch_26_value = 0;
-    gen_01_dcblock_38_xm1 = 0;
-    gen_01_dcblock_38_ym1 = 0;
-    gen_01_dcblock_40_xm1 = 0;
-    gen_01_dcblock_40_ym1 = 0;
+    gen_01_dcblock_42_xm1 = 0;
+    gen_01_dcblock_42_ym1 = 0;
+    gen_01_dcblock_44_xm1 = 0;
+    gen_01_dcblock_44_ym1 = 0;
     gen_01_setupDone = false;
     param_02_lastValue = 0;
     param_03_lastValue = 0;
@@ -2910,15 +3051,18 @@ void assign_defaults()
 
     // data ref strings
     struct DataRefStrings {
-    	static constexpr auto& name0 = "RingBuff";
+    	static constexpr auto& name0 = "ringBuffIndex";
     	static constexpr auto& file0 = "";
     	static constexpr auto& tag0 = "buffer~";
-    	static constexpr auto& name1 = "gen_01_delL_bufferobj";
+    	static constexpr auto& name1 = "ringBuff";
     	static constexpr auto& file1 = "";
     	static constexpr auto& tag1 = "buffer~";
-    	static constexpr auto& name2 = "gen_01_delR_bufferobj";
+    	static constexpr auto& name2 = "gen_01_delL_bufferobj";
     	static constexpr auto& file2 = "";
     	static constexpr auto& tag2 = "buffer~";
+    	static constexpr auto& name3 = "gen_01_delR_bufferobj";
+    	static constexpr auto& file3 = "";
+    	static constexpr auto& tag3 = "buffer~";
     	DataRefStrings* operator->() { return this; }
     	const DataRefStrings* operator->() const { return this; }
     };
@@ -2927,11 +3071,21 @@ void assign_defaults()
 
 // member variables
 
+    number data_01_sizeout;
+    number data_01_size;
+    number data_01_sizems;
+    number data_01_normalize;
+    number data_01_channels;
+    number data_02_sizeout;
+    number data_02_size;
+    number data_02_sizems;
+    number data_02_normalize;
+    number data_02_channels;
     number param_01_value;
     number gen_01_in1;
     number gen_01_in2;
     number gen_01_movDur;
-    number gen_01_grainSpeed;
+    number gen_01_grainSize;
     number gen_01_reverse;
     number gen_01_Mix;
     number gen_01_delTime;
@@ -2979,8 +3133,6 @@ void assign_defaults()
     number expr_06_in1;
     number expr_06_in2;
     number expr_06_out1;
-    number intnum_tilde_01_value;
-    number intnum_tilde_02_value;
     MillisecondTime _currentTime;
     ENGINE _internalEngine;
     UInt64 audioProcessSampleCount;
@@ -2992,9 +3144,15 @@ void assign_defaults()
     Index maxvs;
     number sr;
     number invsr;
+    Float32BufferRef data_01_buffer;
+    Int data_01_sizemode;
+    bool data_01_setupDone;
+    Float32BufferRef data_02_buffer;
+    Int data_02_sizemode;
+    bool data_02_setupDone;
     number param_01_lastValue;
-    Float64BufferRef gen_01_RingBuff_exprdata_buffer;
-    SampleBufferRef gen_01_RingBuff;
+    Float32BufferRef gen_01_RingBuff;
+    Float32BufferRef gen_01_RingBuffIndex;
     number gen_01_lastPhaseReader1_value;
     number gen_01_lastPhaseReader2_value;
     number gen_01_PhaseDiff1_value;
@@ -3031,10 +3189,10 @@ void assign_defaults()
     number gen_01_latch_22_value;
     UInt gen_01_noise_24_state[4] = { };
     number gen_01_latch_26_value;
-    number gen_01_dcblock_38_xm1;
-    number gen_01_dcblock_38_ym1;
-    number gen_01_dcblock_40_xm1;
-    number gen_01_dcblock_40_ym1;
+    number gen_01_dcblock_42_xm1;
+    number gen_01_dcblock_42_ym1;
+    number gen_01_dcblock_44_xm1;
+    number gen_01_dcblock_44_ym1;
     bool gen_01_setupDone;
     number param_02_lastValue;
     number param_03_lastValue;
@@ -3063,7 +3221,8 @@ void assign_defaults()
     signal globaltransport_tempo;
     signal globaltransport_state;
     number stackprotect_count;
-    DataRef RingBuff;
+    DataRef ringBuffIndex;
+    DataRef ringBuff;
     DataRef gen_01_delL_bufferobj;
     DataRef gen_01_delR_bufferobj;
     Index _voiceIndex;

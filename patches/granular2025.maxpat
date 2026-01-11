@@ -40,6 +40,58 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"fontface" : 0,
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-1",
+					"maxclass" : "number~",
+					"mode" : 2,
+					"numinlets" : 2,
+					"numoutlets" : 2,
+					"outlettype" : [ "signal", "float" ],
+					"patching_rect" : [ 52.0, 337.0, 94.0, 22.0 ],
+					"sig" : 0.0
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"basictuning" : 440,
+					"data" : 					{
+						"clips" : [ 							{
+								"absolutepath" : "Macintosh HD:/Users/yuki/Downloads/Inst 1.wav",
+								"filename" : "Inst 1.wav",
+								"filekind" : "audiofile",
+								"id" : "u194005922",
+								"loop" : 1,
+								"content_state" : 								{
+									"loop" : 1
+								}
+
+							}
+ ]
+					}
+,
+					"followglobaltempo" : 0,
+					"formantcorrection" : 0,
+					"id" : "obj-17",
+					"maxclass" : "playlist~",
+					"mode" : "basic",
+					"numinlets" : 1,
+					"numoutlets" : 5,
+					"originallength" : [ 0.0, "ticks" ],
+					"originaltempo" : 120.0,
+					"outlettype" : [ "signal", "signal", "signal", "", "dictionary" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 375.0, 78.0, 132.0, 30.0 ],
+					"pitchcorrection" : 0,
+					"quality" : "basic",
+					"timestretch" : [ 0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"attr" : "density",
 					"id" : "obj-26",
 					"maxclass" : "attrui",
@@ -58,8 +110,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 161.0, 291.0, 325.0, 107.0 ],
-					"range" : [ -1.0, 1.100000023841858 ]
+					"patching_rect" : [ 160.0, 271.0, 325.0, 107.0 ],
+					"range" : [ 0.0, 88200.0 ]
 				}
 
 			}
@@ -83,7 +135,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 161.0, 182.0, 325.0, 107.0 ],
+					"patching_rect" : [ 160.0, 162.0, 325.0, 107.0 ],
 					"range" : [ -1.0, 1.100000023841858 ]
 				}
 
@@ -162,19 +214,6 @@
 			}
 , 			{
 				"box" : 				{
-					"attr" : "feedCoe",
-					"id" : "obj-12",
-					"maxclass" : "attrui",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 214.0, 158.0, 150.0, 22.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"attr" : "delTime",
 					"id" : "obj-2",
 					"maxclass" : "attrui",
@@ -183,30 +222,6 @@
 					"outlettype" : [ "" ],
 					"parameter_enable" : 0,
 					"patching_rect" : [ 214.0, 134.0, 150.0, 22.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-11",
-					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "signal" ],
-					"patching_rect" : [ 385.0, 101.0, 40.0, 22.0 ],
-					"text" : "*~ 0.5"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-1",
-					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "signal" ],
-					"patching_rect" : [ 385.0, 65.0, 66.0, 22.0 ],
-					"text" : "cycle~ 440"
 				}
 
 			}
@@ -250,7 +265,7 @@
 			}
 , 			{
 				"box" : 				{
-					"attr" : "grainSpeed",
+					"attr" : "grainSize",
 					"id" : "obj-14",
 					"maxclass" : "attrui",
 					"numinlets" : 1,
@@ -306,7 +321,7 @@
 					"orientation" : 1,
 					"outlettype" : [ "signal", "signal", "", "float", "list" ],
 					"parameter_enable" : 1,
-					"patching_rect" : [ 7.0, 222.0, 136.0, 47.0 ],
+					"patching_rect" : [ 6.0, 214.0, 136.0, 47.0 ],
 					"saved_attribute_attributes" : 					{
 						"valueof" : 						{
 							"parameter_longname" : "live.gain~",
@@ -352,7 +367,7 @@
 ,
 					"maxclass" : "newobj",
 					"numinlets" : 3,
-					"numoutlets" : 4,
+					"numoutlets" : 3,
 					"outletInfo" : 					{
 						"IOInfo" : [ 							{
 								"type" : "signal",
@@ -366,16 +381,10 @@
 								"tag" : "out2",
 								"comment" : ""
 							}
-, 							{
-								"type" : "signal",
-								"index" : 3,
-								"tag" : "out3",
-								"comment" : ""
-							}
  ]
 					}
 ,
-					"outlettype" : [ "signal", "signal", "signal", "list" ],
+					"outlettype" : [ "signal", "signal", "list" ],
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
@@ -387,7 +396,7 @@
 						}
 ,
 						"classnamespace" : "rnbo",
-						"rect" : [ 34.0, 380.0, 510.0, 233.0 ],
+						"rect" : [ 34.0, 426.0, 560.0, 287.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -418,25 +427,30 @@
 						"title" : "untitled",
 						"boxes" : [ 							{
 								"box" : 								{
-									"id" : "obj-18",
+									"id" : "obj-30",
 									"maxclass" : "newobj",
 									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 119.0, 81.0, 43.0, 23.0 ],
-									"rnbo_classname" : "out~",
+									"numoutlets" : 3,
+									"outlettype" : [ "", "", "" ],
+									"patching_rect" : [ 8.5, 230.0, 235.0, 23.0 ],
+									"rnbo_classname" : "buffer~",
 									"rnbo_extra_attributes" : 									{
-										"comment" : "",
+										"type" : "",
+										"file" : "",
+										"preset" : 0,
+										"fill" : "",
+										"samplerate" : 0.0,
 										"meta" : ""
 									}
 ,
-									"rnbo_serial" : 4,
-									"rnbo_uniqueid" : "out~_obj-18",
+									"rnbo_serial" : 1,
+									"rnbo_uniqueid" : "buffer~_obj-30",
 									"rnboinfo" : 									{
 										"needsInstanceInfo" : 1,
 										"argnames" : 										{
-											"in1" : 											{
+											"info" : 											{
 												"attrOrProp" : 1,
-												"digest" : "signal sent to outlet with index 3",
+												"digest" : "Bang to report buffer information.",
 												"isalias" : 0,
 												"aliases" : [  ],
 												"settable" : 0,
@@ -445,12 +459,157 @@
 												"deprecated" : 0,
 												"touched" : 0,
 												"inlet" : 1,
-												"type" : "signal"
+												"type" : "bang"
 											}
 ,
-											"index" : 											{
+											"sizeout" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Size in Samples",
+												"defaultarg" : 2,
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 0,
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"outlet" : 1,
+												"type" : "number",
+												"defaultValue" : "0"
+											}
+,
+											"chanout" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Number of Channels",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"outlet" : 1,
+												"type" : "number",
+												"defaultValue" : "0"
+											}
+,
+											"srout" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Sample rate",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"outlet" : 1,
+												"type" : "number",
+												"defaultValue" : "0"
+											}
+,
+											"size" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Size in Samples. Take care when setting, allocation might block audio processing.",
+												"defaultarg" : 2,
+												"isalias" : 0,
+												"aliases" : [ "samples" ],
+												"settable" : 1,
+												"attachable" : 1,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "number",
+												"defaultValue" : "0"
+											}
+,
+											"samples" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Size in Samples. Take care when setting, allocation might block audio processing.",
+												"defaultarg" : 2,
+												"isalias" : 1,
+												"aliasOf" : "size",
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 1,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "number",
+												"defaultValue" : "0"
+											}
+,
+											"sizems" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Size in Milliseconds. Take care when setting, allocation might block audio processing.",
+												"isalias" : 0,
+												"aliases" : [ "ms" ],
+												"settable" : 1,
+												"attachable" : 1,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "number",
+												"defaultValue" : "0"
+											}
+,
+											"ms" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Size in Milliseconds. Take care when setting, allocation might block audio processing.",
+												"isalias" : 1,
+												"aliasOf" : "sizems",
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 1,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "number",
+												"defaultValue" : "0"
+											}
+,
+											"clear" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Clear the contents of the buffer",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"attachable" : 1,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "bang"
+											}
+,
+											"normalize" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Find Maximum and normalize to the value given.",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 1,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "number",
+												"defaultValue" : "0.995"
+											}
+,
+											"channels" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Change channel count. Take care when setting, allocation might block audio processing.",
+												"defaultarg" : 3,
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 1,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "number",
+												"defaultValue" : "1"
+											}
+,
+											"name" : 											{
 												"attrOrProp" : 2,
-												"digest" : "outlet number",
+												"digest" : "Name of the data buffer",
 												"defaultarg" : 1,
 												"isalias" : 0,
 												"aliases" : [  ],
@@ -459,13 +618,13 @@
 												"isparam" : 0,
 												"deprecated" : 0,
 												"touched" : 0,
-												"type" : "number",
+												"type" : "symbol",
 												"mandatory" : 1
 											}
 ,
-											"comment" : 											{
+											"file" : 											{
 												"attrOrProp" : 2,
-												"digest" : "mouse over comment",
+												"digest" : "File name/path or URL to load into buffer.",
 												"isalias" : 0,
 												"aliases" : [  ],
 												"settable" : 1,
@@ -474,6 +633,77 @@
 												"deprecated" : 0,
 												"touched" : 0,
 												"type" : "symbol"
+											}
+,
+											"type" : 											{
+												"attrOrProp" : 2,
+												"digest" : "Type of Data (float32, float64)",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "symbol"
+											}
+,
+											"samplerate" : 											{
+												"attrOrProp" : 2,
+												"digest" : "Sample rate",
+												"defaultarg" : 4,
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "number",
+												"defaultValue" : "0"
+											}
+,
+											"fill" : 											{
+												"attrOrProp" : 2,
+												"digest" : "Fill expression, this could be a value, or a simple function like sin(x), where x will run from 0 to 1 to fill the buffer.",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "symbol"
+											}
+,
+											"external" : 											{
+												"attrOrProp" : 2,
+												"digest" : "Await data from the outside world.",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "bool",
+												"doNotShowInMaxInspector" : 1
+											}
+,
+											"preset" : 											{
+												"attrOrProp" : 2,
+												"digest" : "Add this value to the preset.",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "bool",
+												"defaultValue" : "false",
+												"label" : "Include In Preset",
+												"category" : "Preset"
 											}
 ,
 											"meta" : 											{
@@ -488,31 +718,406 @@
 												"touched" : 0,
 												"type" : "symbol",
 												"defaultValue" : "",
-												"label" : "Metadata",
-												"displayorder" : 3
+												"label" : "Metadata"
 											}
 
 										}
 ,
 										"inputs" : [ 											{
-												"name" : "in1",
-												"type" : "signal",
-												"digest" : "signal sent to outlet with index 3",
-												"displayName" : "",
+												"name" : "info",
+												"type" : "bang",
+												"digest" : "Bang to report buffer information.",
 												"hot" : 1,
 												"docked" : 0
 											}
  ],
-										"outputs" : [  ],
-										"helpname" : "out~",
-										"aliasOf" : "out~",
-										"classname" : "out~",
+										"outputs" : [ 											{
+												"name" : "sizeout",
+												"type" : "number",
+												"digest" : "Size in Samples",
+												"defaultarg" : 2,
+												"docked" : 0
+											}
+, 											{
+												"name" : "chanout",
+												"type" : "number",
+												"digest" : "Number of Channels",
+												"docked" : 0
+											}
+, 											{
+												"name" : "srout",
+												"type" : "number",
+												"digest" : "Sample rate",
+												"docked" : 0
+											}
+ ],
+										"helpname" : "buffer~",
+										"aliasOf" : "data",
+										"classname" : "buffer~",
 										"operator" : 0,
-										"versionId" : 1989326771,
-										"changesPatcherIO" : 1
+										"versionId" : -72996304,
+										"changesPatcherIO" : 0
 									}
 ,
-									"text" : "out~ 3"
+									"text" : "buffer~ ringBuffIndex @size 1 @channels 2"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"allowdrag" : 0,
+									"buffername" : "ringBuff",
+									"id" : "obj-21",
+									"maxclass" : "waveform~",
+									"numinlets" : 0,
+									"numoutlets" : 6,
+									"outlettype" : [ "float", "float", "float", "float", "list", "" ],
+									"outmode" : 0,
+									"patching_rect" : [ 528.0, 40.0, 523.0, 145.0 ],
+									"quiet" : 1,
+									"rnbo_classname" : "waveform~",
+									"rnbo_serial" : 1,
+									"rnbo_uniqueid" : "waveform~_obj-21",
+									"setunit" : 1
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-19",
+									"linecount" : 2,
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 3,
+									"outlettype" : [ "", "", "" ],
+									"patching_rect" : [ 8.5, 184.0, 156.0, 37.0 ],
+									"rnbo_classname" : "buffer~",
+									"rnbo_extra_attributes" : 									{
+										"type" : "",
+										"file" : "",
+										"preset" : 0,
+										"fill" : "",
+										"samplerate" : 0.0,
+										"meta" : ""
+									}
+,
+									"rnbo_serial" : 2,
+									"rnbo_uniqueid" : "buffer~_obj-19",
+									"rnboinfo" : 									{
+										"needsInstanceInfo" : 1,
+										"argnames" : 										{
+											"info" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Bang to report buffer information.",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 0,
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"inlet" : 1,
+												"type" : "bang"
+											}
+,
+											"sizeout" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Size in Samples",
+												"defaultarg" : 2,
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 0,
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"outlet" : 1,
+												"type" : "number",
+												"defaultValue" : "0"
+											}
+,
+											"chanout" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Number of Channels",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"outlet" : 1,
+												"type" : "number",
+												"defaultValue" : "0"
+											}
+,
+											"srout" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Sample rate",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"outlet" : 1,
+												"type" : "number",
+												"defaultValue" : "0"
+											}
+,
+											"size" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Size in Samples. Take care when setting, allocation might block audio processing.",
+												"defaultarg" : 2,
+												"isalias" : 0,
+												"aliases" : [ "samples" ],
+												"settable" : 1,
+												"attachable" : 1,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "number",
+												"defaultValue" : "0"
+											}
+,
+											"samples" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Size in Samples. Take care when setting, allocation might block audio processing.",
+												"defaultarg" : 2,
+												"isalias" : 1,
+												"aliasOf" : "size",
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 1,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "number",
+												"defaultValue" : "0"
+											}
+,
+											"sizems" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Size in Milliseconds. Take care when setting, allocation might block audio processing.",
+												"isalias" : 0,
+												"aliases" : [ "ms" ],
+												"settable" : 1,
+												"attachable" : 1,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "number",
+												"defaultValue" : "0"
+											}
+,
+											"ms" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Size in Milliseconds. Take care when setting, allocation might block audio processing.",
+												"isalias" : 1,
+												"aliasOf" : "sizems",
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 1,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "number",
+												"defaultValue" : "0"
+											}
+,
+											"clear" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Clear the contents of the buffer",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"attachable" : 1,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "bang"
+											}
+,
+											"normalize" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Find Maximum and normalize to the value given.",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 1,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "number",
+												"defaultValue" : "0.995"
+											}
+,
+											"channels" : 											{
+												"attrOrProp" : 1,
+												"digest" : "Change channel count. Take care when setting, allocation might block audio processing.",
+												"defaultarg" : 3,
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 1,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "number",
+												"defaultValue" : "1"
+											}
+,
+											"name" : 											{
+												"attrOrProp" : 2,
+												"digest" : "Name of the data buffer",
+												"defaultarg" : 1,
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "symbol",
+												"mandatory" : 1
+											}
+,
+											"file" : 											{
+												"attrOrProp" : 2,
+												"digest" : "File name/path or URL to load into buffer.",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "symbol"
+											}
+,
+											"type" : 											{
+												"attrOrProp" : 2,
+												"digest" : "Type of Data (float32, float64)",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "symbol"
+											}
+,
+											"samplerate" : 											{
+												"attrOrProp" : 2,
+												"digest" : "Sample rate",
+												"defaultarg" : 4,
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "number",
+												"defaultValue" : "0"
+											}
+,
+											"fill" : 											{
+												"attrOrProp" : 2,
+												"digest" : "Fill expression, this could be a value, or a simple function like sin(x), where x will run from 0 to 1 to fill the buffer.",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "symbol"
+											}
+,
+											"external" : 											{
+												"attrOrProp" : 2,
+												"digest" : "Await data from the outside world.",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "bool",
+												"doNotShowInMaxInspector" : 1
+											}
+,
+											"preset" : 											{
+												"attrOrProp" : 2,
+												"digest" : "Add this value to the preset.",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "bool",
+												"defaultValue" : "false",
+												"label" : "Include In Preset",
+												"category" : "Preset"
+											}
+,
+											"meta" : 											{
+												"attrOrProp" : 2,
+												"digest" : "A JSON formatted string containing metadata for use by the exported code",
+												"isalias" : 0,
+												"aliases" : [  ],
+												"settable" : 1,
+												"attachable" : 0,
+												"isparam" : 0,
+												"deprecated" : 0,
+												"touched" : 0,
+												"type" : "symbol",
+												"defaultValue" : "",
+												"label" : "Metadata"
+											}
+
+										}
+,
+										"inputs" : [ 											{
+												"name" : "info",
+												"type" : "bang",
+												"digest" : "Bang to report buffer information.",
+												"hot" : 1,
+												"docked" : 0
+											}
+ ],
+										"outputs" : [ 											{
+												"name" : "sizeout",
+												"type" : "number",
+												"digest" : "Size in Samples",
+												"defaultarg" : 2,
+												"docked" : 0
+											}
+, 											{
+												"name" : "chanout",
+												"type" : "number",
+												"digest" : "Number of Channels",
+												"docked" : 0
+											}
+, 											{
+												"name" : "srout",
+												"type" : "number",
+												"digest" : "Sample rate",
+												"docked" : 0
+											}
+ ],
+										"helpname" : "buffer~",
+										"aliasOf" : "data",
+										"classname" : "buffer~",
+										"operator" : 0,
+										"versionId" : -72996304,
+										"changesPatcherIO" : 0
+									}
+,
+									"text" : "buffer~ ringBuff @size samplerate*2 @channels 2"
 								}
 
 							}
@@ -523,9 +1128,9 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 6.0, 179.0, 98.0, 23.0 ],
+									"patching_rect" : [ 8.5, 152.0, 98.0, 23.0 ],
 									"rnbo_classname" : "setparam",
-									"rnbo_serial" : 9,
+									"rnbo_serial" : 1,
 									"rnbo_uniqueid" : "setparam_obj-16",
 									"rnboinfo" : 									{
 										"needsInstanceInfo" : 1,
@@ -582,25 +1187,25 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 6.0, 140.0, 156.0, 37.0 ],
+									"patching_rect" : [ 8.5, 113.0, 156.0, 37.0 ],
 									"rnbo_classname" : "param",
 									"rnbo_extra_attributes" : 									{
-										"unit" : "",
-										"order" : "0",
-										"displayname" : "",
+										"displayorder" : "-",
 										"tonormalized" : "",
 										"preset" : 1,
+										"displayname" : "",
 										"fromnormalized" : "",
-										"steps" : 0.0,
-										"displayorder" : "-",
-										"ctlin" : -1.0,
-										"sendinit" : 1,
 										"exponent" : 1.0,
+										"ctlin" : -1.0,
+										"order" : "0",
+										"enum" : "",
 										"meta" : "",
-										"enum" : ""
+										"sendinit" : 1,
+										"steps" : 0.0,
+										"unit" : ""
 									}
 ,
-									"rnbo_serial" : 15,
+									"rnbo_serial" : 1,
 									"rnbo_uniqueid" : "density",
 									"rnboinfo" : 									{
 										"needsInstanceInfo" : 1,
@@ -1026,9 +1631,9 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 350.0, 113.0, 107.0, 23.0 ],
+									"patching_rect" : [ 350.0, 133.0, 107.0, 23.0 ],
 									"rnbo_classname" : "setparam",
-									"rnbo_serial" : 1,
+									"rnbo_serial" : 8,
 									"rnbo_uniqueid" : "setparam_obj-10",
 									"rnboinfo" : 									{
 										"needsInstanceInfo" : 1,
@@ -1073,7 +1678,7 @@
 										"changesPatcherIO" : 0
 									}
 ,
-									"text" : "setparam FeedCoe"
+									"text" : "setparam feedCoe"
 								}
 
 							}
@@ -1085,25 +1690,25 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 350.0, 74.0, 153.0, 37.0 ],
+									"patching_rect" : [ 350.0, 94.0, 153.0, 37.0 ],
 									"rnbo_classname" : "param",
 									"rnbo_extra_attributes" : 									{
-										"unit" : "",
-										"order" : "0",
-										"displayname" : "",
+										"displayorder" : "-",
 										"tonormalized" : "",
 										"preset" : 1,
+										"displayname" : "",
 										"fromnormalized" : "",
-										"steps" : 0.0,
-										"displayorder" : "-",
-										"ctlin" : 0.0,
-										"sendinit" : 1,
 										"exponent" : 1.0,
+										"ctlin" : 0.0,
+										"order" : "0",
+										"enum" : "",
 										"meta" : "",
-										"enum" : ""
+										"sendinit" : 1,
+										"steps" : 0.0,
+										"unit" : ""
 									}
 ,
-									"rnbo_serial" : 13,
+									"rnbo_serial" : 2,
 									"rnbo_uniqueid" : "feedCoe",
 									"rnboinfo" : 									{
 										"needsInstanceInfo" : 1,
@@ -1529,9 +2134,9 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 350.0, 45.0, 102.0, 23.0 ],
+									"patching_rect" : [ 350.0, 65.0, 102.0, 23.0 ],
 									"rnbo_classname" : "setparam",
-									"rnbo_serial" : 2,
+									"rnbo_serial" : 3,
 									"rnbo_uniqueid" : "setparam_obj-6",
 									"rnboinfo" : 									{
 										"needsInstanceInfo" : 1,
@@ -1588,25 +2193,25 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 350.0, 6.0, 155.0, 37.0 ],
+									"patching_rect" : [ 350.0, 26.0, 155.0, 37.0 ],
 									"rnbo_classname" : "param",
 									"rnbo_extra_attributes" : 									{
-										"unit" : "",
-										"order" : "0",
-										"displayname" : "",
+										"displayorder" : "-",
 										"tonormalized" : "",
 										"preset" : 1,
+										"displayname" : "",
 										"fromnormalized" : "",
-										"steps" : 0.0,
-										"displayorder" : "-",
-										"ctlin" : 0.0,
-										"sendinit" : 1,
 										"exponent" : 1.0,
+										"ctlin" : 0.0,
+										"order" : "0",
+										"enum" : "",
 										"meta" : "",
-										"enum" : ""
+										"sendinit" : 1,
+										"steps" : 0.0,
+										"unit" : ""
 									}
 ,
-									"rnbo_serial" : 8,
+									"rnbo_serial" : 3,
 									"rnbo_uniqueid" : "delTime",
 									"rnboinfo" : 									{
 										"needsInstanceInfo" : 1,
@@ -2032,9 +2637,9 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 181.0, 178.0, 80.0, 23.0 ],
+									"patching_rect" : [ 181.0, 198.0, 80.0, 23.0 ],
 									"rnbo_classname" : "setparam",
-									"rnbo_serial" : 3,
+									"rnbo_serial" : 4,
 									"rnbo_uniqueid" : "setparam_obj-40",
 									"rnboinfo" : 									{
 										"needsInstanceInfo" : 1,
@@ -2091,25 +2696,25 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 181.0, 140.0, 162.0, 37.0 ],
+									"patching_rect" : [ 181.0, 160.0, 162.0, 37.0 ],
 									"rnbo_classname" : "param",
 									"rnbo_extra_attributes" : 									{
-										"unit" : "",
-										"order" : "0",
-										"displayname" : "",
+										"displayorder" : "-",
 										"tonormalized" : "",
 										"preset" : 1,
+										"displayname" : "",
 										"fromnormalized" : "",
-										"steps" : 0.0,
-										"displayorder" : "-",
-										"ctlin" : 0.0,
-										"sendinit" : 1,
 										"exponent" : 1.0,
+										"ctlin" : 0.0,
+										"order" : "0",
+										"enum" : "",
 										"meta" : "",
-										"enum" : ""
+										"sendinit" : 1,
+										"steps" : 0.0,
+										"unit" : ""
 									}
 ,
-									"rnbo_serial" : 3,
+									"rnbo_serial" : 4,
 									"rnbo_uniqueid" : "Mix",
 									"rnboinfo" : 									{
 										"needsInstanceInfo" : 1,
@@ -2535,9 +3140,9 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 350.0, 179.0, 99.0, 23.0 ],
+									"patching_rect" : [ 350.0, 199.0, 99.0, 23.0 ],
 									"rnbo_classname" : "setparam",
-									"rnbo_serial" : 4,
+									"rnbo_serial" : 5,
 									"rnbo_uniqueid" : "setparam_obj-14",
 									"rnboinfo" : 									{
 										"needsInstanceInfo" : 1,
@@ -2594,25 +3199,25 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 350.0, 140.0, 155.0, 37.0 ],
+									"patching_rect" : [ 350.0, 160.0, 155.0, 37.0 ],
 									"rnbo_classname" : "param",
 									"rnbo_extra_attributes" : 									{
-										"unit" : "",
-										"order" : "0",
-										"displayname" : "",
+										"displayorder" : "-",
 										"tonormalized" : "",
 										"preset" : 1,
+										"displayname" : "",
 										"fromnormalized" : "",
-										"steps" : 0.0,
-										"displayorder" : "-",
-										"ctlin" : 0.0,
-										"sendinit" : 1,
 										"exponent" : 1.0,
+										"ctlin" : 0.0,
+										"order" : "0",
+										"enum" : "",
 										"meta" : "",
-										"enum" : ""
+										"sendinit" : 1,
+										"steps" : 0.0,
+										"unit" : ""
 									}
 ,
-									"rnbo_serial" : 4,
+									"rnbo_serial" : 5,
 									"rnbo_uniqueid" : "reverse",
 									"rnboinfo" : 									{
 										"needsInstanceInfo" : 1,
@@ -3038,9 +3643,9 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 182.0, 112.0, 119.0, 23.0 ],
+									"patching_rect" : [ 182.0, 132.0, 107.0, 23.0 ],
 									"rnbo_classname" : "setparam",
-									"rnbo_serial" : 5,
+									"rnbo_serial" : 6,
 									"rnbo_uniqueid" : "setparam_obj-12",
 									"rnboinfo" : 									{
 										"needsInstanceInfo" : 1,
@@ -3085,7 +3690,7 @@
 										"changesPatcherIO" : 0
 									}
 ,
-									"text" : "setparam grainSpeed"
+									"text" : "setparam grainSize"
 								}
 
 							}
@@ -3097,26 +3702,26 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 182.0, 74.0, 161.0, 37.0 ],
+									"patching_rect" : [ 182.0, 94.0, 169.0, 37.0 ],
 									"rnbo_classname" : "param",
 									"rnbo_extra_attributes" : 									{
-										"unit" : "",
-										"order" : "0",
-										"displayname" : "",
+										"displayorder" : "-",
 										"tonormalized" : "",
 										"preset" : 1,
+										"displayname" : "",
 										"fromnormalized" : "",
-										"steps" : 0.0,
-										"displayorder" : "-",
-										"ctlin" : 0.0,
-										"sendinit" : 1,
 										"exponent" : 1.0,
+										"ctlin" : 0.0,
+										"order" : "0",
+										"enum" : "",
 										"meta" : "",
-										"enum" : ""
+										"sendinit" : 1,
+										"steps" : 0.0,
+										"unit" : ""
 									}
 ,
-									"rnbo_serial" : 5,
-									"rnbo_uniqueid" : "grainSpeed",
+									"rnbo_serial" : 6,
+									"rnbo_uniqueid" : "grainSize",
 									"rnboinfo" : 									{
 										"needsInstanceInfo" : 1,
 										"argnames" : 										{
@@ -3133,7 +3738,7 @@
 												"touched" : 0,
 												"inlet" : 1,
 												"type" : "number",
-												"defaultValue" : "1"
+												"defaultValue" : "1000"
 											}
 ,
 											"normalizedvalue" : 											{
@@ -3529,8 +4134,8 @@
 										"changesPatcherIO" : 0
 									}
 ,
-									"text" : "param grainSpeed @value 1. @min 0.1 @max 30.",
-									"varname" : "grainSpeed"
+									"text" : "param grainSize @value 1000. @min 10. @max 2000.",
+									"varname" : "grainSize"
 								}
 
 							}
@@ -3541,9 +4146,9 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 181.0, 45.0, 103.0, 23.0 ],
+									"patching_rect" : [ 181.0, 65.0, 103.0, 23.0 ],
 									"rnbo_classname" : "setparam",
-									"rnbo_serial" : 6,
+									"rnbo_serial" : 7,
 									"rnbo_uniqueid" : "setparam_obj-8",
 									"rnboinfo" : 									{
 										"needsInstanceInfo" : 1,
@@ -3600,25 +4205,25 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 181.0, 6.0, 161.0, 37.0 ],
+									"patching_rect" : [ 181.0, 26.0, 161.0, 37.0 ],
 									"rnbo_classname" : "param",
 									"rnbo_extra_attributes" : 									{
-										"unit" : "",
-										"order" : "0",
-										"displayname" : "",
+										"displayorder" : "-",
 										"tonormalized" : "",
 										"preset" : 1,
+										"displayname" : "",
 										"fromnormalized" : "",
-										"steps" : 0.0,
-										"displayorder" : "-",
-										"ctlin" : 0.0,
-										"sendinit" : 1,
 										"exponent" : 1.0,
+										"ctlin" : 0.0,
+										"order" : "0",
+										"enum" : "",
 										"meta" : "",
-										"enum" : ""
+										"sendinit" : 1,
+										"steps" : 0.0,
+										"unit" : ""
 									}
 ,
-									"rnbo_serial" : 6,
+									"rnbo_serial" : 7,
 									"rnbo_uniqueid" : "movDur",
 									"rnboinfo" : 									{
 										"needsInstanceInfo" : 1,
@@ -4383,11 +4988,11 @@
 													"box" : 													{
 														"maxclass" : "newobj",
 														"text" : "in 1",
-														"outlettype" : [ "" ],
-														"patching_rect" : [ 9.0, 5.0, 28.0, 22.0 ],
 														"numinlets" : 0,
 														"numoutlets" : 1,
-														"id" : "obj-9"
+														"patching_rect" : [ 9.0, 5.0, 28.0, 22.0 ],
+														"id" : "obj-9",
+														"outlettype" : [ "" ]
 													}
 
 												}
@@ -4395,9 +5000,9 @@
 													"box" : 													{
 														"maxclass" : "newobj",
 														"text" : "out 2",
-														"patching_rect" : [ 711.0, 663.0, 35.0, 22.0 ],
 														"numinlets" : 1,
 														"numoutlets" : 0,
+														"patching_rect" : [ 711.0, 663.0, 35.0, 22.0 ],
 														"id" : "obj-7"
 													}
 
@@ -4406,9 +5011,9 @@
 													"box" : 													{
 														"maxclass" : "comment",
 														"text" : "https://cycling74.com/forums/circular-buffer-click-between-the-last-and-first-sample",
-														"patching_rect" : [ 53.0, 11.0, 505.0, 20.0 ],
 														"numinlets" : 1,
 														"numoutlets" : 0,
+														"patching_rect" : [ 53.0, 11.0, 505.0, 20.0 ],
 														"id" : "obj-16"
 													}
 
@@ -4417,14 +5022,14 @@
 													"box" : 													{
 														"maxclass" : "codebox",
 														"fontsize" : 12.0,
-														"outlettype" : [ "", "" ],
 														"fontname" : "<Monospaced>",
-														"patching_rect" : [ 9.0, 41.0, 721.0, 598.0 ],
 														"numinlets" : 2,
 														"fontface" : 0,
 														"numoutlets" : 2,
+														"patching_rect" : [ 9.0, 41.0, 721.0, 598.0 ],
 														"id" : "obj-5",
-														"code" : "Data RingBuff(samplerate * 2, 2);\r\nParam movDur(0);\r\nParam grainSpeed(0);\r\nParam reverse(0);\r\nParam Mix(0);\r\nParam delTime(0);\r\nParam feedCoe(0);\r\nParam density(0);\r\nHistory lastPhaseReader1(0);\r\nHistory lastPhaseReader2(0);\r\nHistory PhaseDiff1(0);\r\nHistory PhaseDiff2(0);\r\nDelay delL(samplerate);\r\nDelay delR(samplerate);\r\ngrain1, grain2 = 0;\r\ngrainSize = mstosamps(1000 / grainSpeed) ;\r\n\r\nBuffCount1, BuffCount2, BuffCount3 = counter(1, 0, dim(RingBuff));\r\npoke(RingBuff, in1, BuffCount1, 0, boundmode = \"wrap\");\r\npoke(RingBuff, in2, BuffCount1, 1, boundmode = \"wrap\");\r\n\r\nMovCount1, MovCount2, MovCount3 = counter(1, 0, mstosamps(movDur));\r\n\r\n//Changing the grain size mid-cycle causes click noise, \r\n//so hold the existing value until the cycle ends.\r\nholdGrainSize1= latch(grainSize, PhaseDiff1 >= 0.99);\r\nholdGrainSize2= latch(grainSize, PhaseDiff2 >= 0.99);\r\n\r\npos1 = scale(sah(noise(), MovCount1, 0), -1, 1, 0, dim(RingBuff) -  (2 * holdGrainSize1));\r\npos2 = scale(sah(noise(), MovCount1, 0), -1, 1, 0, dim(RingBuff) -  (2 * holdGrainSize2));\r\nmoving_window = 0.5 - 0.5 * cos(twopi * (MovCount1 / mstosamps(movDur)));\r\nphaseReader1 = phasor(grainSpeed);\r\n//R is shifted by half a cycle.\r\nphaseReader2 = wrap(phasor(grainSpeed) + 0.5, 0, 1);\r\nPhaseDiff1 = lastPhaseReader1 - phaseReader1;\r\nPhaseDiff2 = lastPhaseReader2 - phaseReader2;\r\nlastPhaseReader1 = phaseReader1;\r\nlastPhaseReader2 = phaseReader2;\r\n\r\n//Calculation of density\r\nrandDensity1 =  (noise() + 1) * 0.5; // 0.0 ~ 1.0\r\nflagWindow1 = latch(randDensity1, PhaseDiff1 >= 0.99) < (density * 0.01);\r\nrandDensity2 =  (noise() + 1) * 0.5; // 0.0 ~ 1.0\r\nflagWindow2 = latch(randDensity2, PhaseDiff2 >= 0.99) < (density * 0.01);\r\n//out3 = latch(PhaseDiff1, randDensity  < density);\r\n//out4 = flagWindow;\r\n\t\t\r\ngrain_window1 = (0.5 - 0.5 * cos(twopi * phaseReader1)) * flagWindow1;\r\ngrain_window2 = (0.5 - 0.5 * cos(twopi * phaseReader2)) * flagWindow2;;\r\n\r\nif(reverse == 1){\r\n\tphaseReader1 = 1 - phaseReader1;\r\n\tphaseReader2 = 1 - phaseReader2;\r\n}\r\ngrainL, waveIndex1 = wave(RingBuff, phaseReader1, pos1, \r\npos1 + holdGrainSize1, 0, interp = \"cubic\", boundmode = \"wrap\");\r\ngrainR, waveIndex2 = wave(RingBuff, phaseReader2, pos2, \r\npos2 + holdGrainSize2, 1, interp = \"cubic\", boundmode = \"wrap\");\r\nwindowGrainL= grainL * moving_window * grain_window1;\r\nwindowGrainR= grainR * moving_window * grain_window2;\r\n\r\ndelGrainL = delL.read(delTime, interp = \"cubic\");\r\nfeedGrainL = (delGrainL * feedCoe) + windowGrainL;\r\ndelL.write(windowGrainL + feedGrainL);\r\n\r\ndelGrainR = delR.read(delTime, interp = \"cubic\");\r\nfeedGrainR = (delGrainR * feedCoe) + windowGrainR;\r\ndelR.write(windowGrainR + feedGrainR);\r\n\r\n\r\nout1 = clip(mix(in1, dcblock(feedGrainL * 0.8), Mix * 0.01), -1, 1);\r\nout2 = clip(mix(in2, dcblock(feedGrainR * 0.8), Mix * 0.01), -1, 1);\r\n "
+														"outlettype" : [ "", "" ],
+														"code" : "Buffer RingBuff(\"ringBuff\");\r\nBuffer RingBuffIndex(\"ringBuffIndex\");\r\nParam movDur(0);\r\nParam grainSize(0);\r\nParam reverse(0);\r\nParam Mix(0);\r\nParam delTime(0);\r\nParam feedCoe(0);\r\nParam density(0);\r\n\r\nHistory lastPhaseReader1(0);\r\nHistory lastPhaseReader2(0);\r\nHistory PhaseDiff1(0);\r\nHistory PhaseDiff2(0);\r\nDelay delL(samplerate);\r\nDelay delR(samplerate);\r\ngrain1, grain2 = 0;\r\ngrainSpeed = 1000 / grainSize ;\r\n\r\nBuffCount1, BuffCount2, BuffCount3 = counter(1, 0, dim(RingBuff));\r\npoke(RingBuff, in1, BuffCount1, 0, boundmode = \"wrap\");\r\npoke(RingBuff, in2, BuffCount1, 1, boundmode = \"wrap\");\r\n\r\nMovCount1, MovCount2, MovCount3 = counter(1, 0, mstosamps(movDur));\r\n\r\n//Changing the grain size mid-cycle causes click noise, \r\n//so hold the existing value until the cycle ends.\r\nholdGrainSize1= latch(mstosamps(grainSize), PhaseDiff1 >= 0.99);\r\nholdGrainSize2= latch(mstosamps(grainSize), PhaseDiff2 >= 0.99);\r\n\r\npos1 = scale(sah(noise(), MovCount1, 0), -1, 1, 0, dim(RingBuff)- holdGrainSize1);\r\npos2 = scale(sah(noise(), MovCount1, 0), -1, 1, 0, dim(RingBuff)- holdGrainSize1);\r\nmoving_window = 0.5 - 0.5 * cos(twopi * (MovCount1 / mstosamps(movDur)));\r\nphaseReader1 = phasor(grainSpeed);\r\n//R is shifted by half a cycle.\r\nphaseReader2 = wrap(phasor(grainSpeed) + 0.5, 0, 1);\r\nPhaseDiff1 = lastPhaseReader1 - phaseReader1;\r\nPhaseDiff2 = lastPhaseReader2 - phaseReader2;\r\nlastPhaseReader1 = phaseReader1;\r\nlastPhaseReader2 = phaseReader2;\r\n\r\n//Calculation of density\r\nrandDensity1 =  (noise() + 1) * 0.5; // 0.0 ~ 1.0\r\nflagWindow1 = latch(randDensity1, PhaseDiff1 >= 0.99) < (density * 0.01);\r\nrandDensity2 =  (noise() + 1) * 0.5; // 0.0 ~ 1.0\r\nflagWindow2 = latch(randDensity2, PhaseDiff2 >= 0.99) < (density * 0.01);\r\n\t\t\r\ngrain_window1 = (0.5 - 0.5 * cos(twopi * phaseReader1)) * flagWindow1;\r\ngrain_window2 = (0.5 - 0.5 * cos(twopi * phaseReader2)) * flagWindow2;;\r\n\r\nif(reverse == 1){\r\n\tphaseReader1 = 1 - phaseReader1;\r\n\tphaseReader2 = 1 - phaseReader2;\r\n}\r\n\r\nbuffIndex1 = scale(phaseReader1, 0, 1, pos1, pos1 + holdGrainSize1);\r\nbuffIndex2 = scale(phaseReader2, 0, 1, pos2, pos2 + holdGrainSize2);\r\nwrapedIndex1 = wrap(buffIndex1, 0, dim(RingBuff));\r\nwrapedIndex2 = wrap(buffIndex2, 0, dim(RingBuff));\r\npoke(RingBuffIndex, wrapedIndex1 * flagWindow1, 0, 0);\r\npoke(RingBuffIndex, wrapedIndex2 * flagWindow2, 0, 1);\r\n//out3 = peek(RingBuffIndex, 0, 1);\r\n\r\ngrainL, waveIndex1 = wave(RingBuff, phaseReader1, pos1, \r\npos1 + holdGrainSize1, 0, boundmode = \"wrap\",  interp = \"cubic\");\r\ngrainR, waveIndex2 = wave(RingBuff, phaseReader2, pos2, \r\npos2 + holdGrainSize2, 1, boundmode = \"wrap\",  interp = \"cubic\");\r\nwindowGrainL= grainL * moving_window * grain_window1;\r\nwindowGrainR= grainR * moving_window * grain_window2;\r\n\r\ndelGrainL = delL.read(delTime, interp = \"cubic\");\r\nfeedGrainL = (delGrainL * feedCoe) + windowGrainL;\r\ndelL.write(windowGrainL + feedGrainL);\r\n\r\ndelGrainR = delR.read(delTime, interp = \"cubic\");\r\nfeedGrainR = (delGrainR * feedCoe) + windowGrainR;\r\ndelR.write(windowGrainR + feedGrainR);\r\n\r\n\r\nout1 = clip(mix(in1, dcblock(feedGrainL * 0.8), Mix * 0.01), -1, 1);\r\nout2 = clip(mix(in2, dcblock(feedGrainR * 0.8), Mix * 0.01), -1, 1);\r\n "
 													}
 
 												}
@@ -4432,11 +5037,11 @@
 													"box" : 													{
 														"maxclass" : "newobj",
 														"text" : "in 2",
-														"outlettype" : [ "" ],
-														"patching_rect" : [ 711.0, 5.0, 28.0, 22.0 ],
 														"numinlets" : 0,
 														"numoutlets" : 1,
-														"id" : "obj-2"
+														"patching_rect" : [ 711.0, 5.0, 28.0, 22.0 ],
+														"id" : "obj-2",
+														"outlettype" : [ "" ]
 													}
 
 												}
@@ -4444,9 +5049,9 @@
 													"box" : 													{
 														"maxclass" : "newobj",
 														"text" : "out 1",
-														"patching_rect" : [ 9.0, 663.0, 35.0, 22.0 ],
 														"numinlets" : 1,
 														"numoutlets" : 0,
+														"patching_rect" : [ 9.0, 663.0, 35.0, 22.0 ],
 														"id" : "obj-4"
 													}
 
@@ -4454,15 +5059,8 @@
  ],
 											"lines" : [ 												{
 													"patchline" : 													{
-														"source" : [ "obj-5", 0 ],
-														"destination" : [ "obj-4", 0 ]
-													}
-
-												}
-, 												{
-													"patchline" : 													{
-														"source" : [ "obj-9", 0 ],
-														"destination" : [ "obj-5", 0 ]
+														"source" : [ "obj-2", 0 ],
+														"destination" : [ "obj-5", 1 ]
 													}
 
 												}
@@ -4475,8 +5073,15 @@
 												}
 , 												{
 													"patchline" : 													{
-														"source" : [ "obj-2", 0 ],
-														"destination" : [ "obj-5", 1 ]
+														"source" : [ "obj-9", 0 ],
+														"destination" : [ "obj-5", 0 ]
+													}
+
+												}
+, 												{
+													"patchline" : 													{
+														"source" : [ "obj-5", 0 ],
+														"destination" : [ "obj-4", 0 ]
 													}
 
 												}
@@ -4807,6 +5412,13 @@
 							}
 , 							{
 								"patchline" : 								{
+									"destination" : [ "obj-5", 0 ],
+									"source" : [ "obj-2", 1 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
 									"destination" : [ "obj-2", 1 ],
 									"source" : [ "obj-3", 0 ]
 								}
@@ -4871,20 +5483,32 @@
 ,
 					"patching_rect" : [ 7.0, 142.0, 52.0, 22.0 ],
 					"rnboattrcache" : 					{
-						"Mix" : 						{
-							"label" : "Mix",
-							"isEnum" : 0,
-							"parsestring" : ""
-						}
-,
-						"grainSpeed" : 						{
-							"label" : "grainSpeed",
+						"density" : 						{
+							"label" : "density",
 							"isEnum" : 0,
 							"parsestring" : ""
 						}
 ,
 						"reverse" : 						{
 							"label" : "reverse",
+							"isEnum" : 0,
+							"parsestring" : ""
+						}
+,
+						"Mix" : 						{
+							"label" : "Mix",
+							"isEnum" : 0,
+							"parsestring" : ""
+						}
+,
+						"feedCoe" : 						{
+							"label" : "feedCoe",
+							"isEnum" : 0,
+							"parsestring" : ""
+						}
+,
+						"grainSize" : 						{
+							"label" : "grainSize",
 							"isEnum" : 0,
 							"parsestring" : ""
 						}
@@ -4897,18 +5521,6 @@
 ,
 						"movDur" : 						{
 							"label" : "movDur",
-							"isEnum" : 0,
-							"parsestring" : ""
-						}
-,
-						"feedCoe" : 						{
-							"label" : "feedCoe",
-							"isEnum" : 0,
-							"parsestring" : ""
-						}
-,
-						"density" : 						{
-							"label" : "density",
 							"isEnum" : 0,
 							"parsestring" : ""
 						}
@@ -4944,11 +5556,11 @@
 						"embed" : 1,
 						"snapshot" : 						{
 							"feedCoe" : 							{
-								"value" : 0.5
+								"value" : 0.318
 							}
 ,
-							"grainSpeed" : 							{
-								"value" : 10.0
+							"grainSize" : 							{
+								"value" : 483.0
 							}
 ,
 							"reverse" : 							{
@@ -4956,7 +5568,7 @@
 							}
 ,
 							"delTime" : 							{
-								"value" : 250.0
+								"value" : 75.0
 							}
 ,
 							"movDur" : 							{
@@ -4964,7 +5576,7 @@
 							}
 ,
 							"density" : 							{
-								"value" : 40.0
+								"value" : 100.0
 							}
 ,
 							"Mix" : 							{
@@ -4987,11 +5599,11 @@
 									"embed" : 0,
 									"snapshot" : 									{
 										"feedCoe" : 										{
-											"value" : 0.5
+											"value" : 0.318
 										}
 ,
-										"grainSpeed" : 										{
-											"value" : 10.0
+										"grainSize" : 										{
+											"value" : 483.0
 										}
 ,
 										"reverse" : 										{
@@ -4999,7 +5611,7 @@
 										}
 ,
 										"delTime" : 										{
-											"value" : 250.0
+											"value" : 75.0
 										}
 ,
 										"movDur" : 										{
@@ -5007,7 +5619,7 @@
 										}
 ,
 										"density" : 										{
-											"value" : 40.0
+											"value" : 100.0
 										}
 ,
 										"Mix" : 										{
@@ -5050,20 +5662,6 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-11", 0 ],
-					"source" : [ "obj-1", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-12", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-4", 0 ],
 					"source" : [ "obj-13", 0 ]
 				}
@@ -5087,6 +5685,13 @@
 				"patchline" : 				{
 					"destination" : [ "obj-4", 0 ],
 					"source" : [ "obj-16", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-4", 0 ],
+					"source" : [ "obj-17", 0 ]
 				}
 
 			}
@@ -5134,15 +5739,8 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-23", 0 ],
+					"destination" : [ "obj-5", 1 ],
 					"source" : [ "obj-4", 1 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-25", 0 ],
-					"source" : [ "obj-4", 2 ]
 				}
 
 			}
@@ -5198,6 +5796,13 @@
 		}
 ,
 		"dependency_cache" : [ 			{
+				"name" : "Inst 1.wav",
+				"bootpath" : "~/Downloads",
+				"patcherrelativepath" : "../../../../Downloads",
+				"type" : "WAVE",
+				"implicit" : 1
+			}
+, 			{
 				"name" : "anton.aif",
 				"bootpath" : "C74:/media/msp",
 				"type" : "AIFF",

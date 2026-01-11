@@ -66,13 +66,13 @@
     {
       "type": "ParameterTypeNumber",
       "index": 3,
-      "name": "grainSpeed",
-      "paramId": "grainSpeed",
-      "minimum": 0.1,
-      "maximum": 30,
+      "name": "grainSize",
+      "paramId": "grainSize",
+      "minimum": 10,
+      "maximum": 2000,
       "exponent": 1,
       "steps": 0,
-      "initialValue": 1,
+      "initialValue": 1000,
       "isEnum": false,
       "enumValues": [],
       "displayName": "",
@@ -152,11 +152,22 @@
   "numSignalInParameters": 0,
   "numSignalOutParameters": 0,
   "numInputChannels": 2,
-  "numOutputChannels": 3,
+  "numOutputChannels": 2,
   "numMidiInputPorts": 1,
   "numMidiOutputPorts": 0,
   "transportUsed": false,
-  "externalDataRefs": [],
+  "externalDataRefs": [
+    {
+      "id": "ringBuffIndex",
+      "type": "Float32Buffer",
+      "tag": "buffer~"
+    },
+    {
+      "id": "ringBuff",
+      "type": "Float32Buffer",
+      "tag": "buffer~"
+    }
+  ],
   "patcherSerial": 0,
   "inports": [],
   "outports": [],
@@ -188,12 +199,6 @@
       "type": "signal",
       "index": 2,
       "tag": "out2",
-      "meta": ""
-    },
-    {
-      "type": "signal",
-      "index": 3,
-      "tag": "out3",
       "meta": ""
     }
   ],

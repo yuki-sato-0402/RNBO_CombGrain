@@ -2,11 +2,13 @@
 #include "CustomAudioEditor.h"
 
 CustomAudioEditor::CustomAudioEditor (CustomAudioProcessor& p, juce::AudioProcessorValueTreeState& vts)
-: AudioProcessorEditor (&p), valueTreeState(vts), audioProcessor(p)
+: AudioProcessorEditor (&p), valueTreeState(vts), audioProcessor(p), waveFormDisplay (p.getRingBufferPointer(), p.getRingBufferIndex(), p.getInformationForDisplay())
 {
+    addAndMakeVisible(waveFormDisplay);
+
     addAndMakeVisible(reverseButton);
     reverseButton.setButtonText("reverse");
-    reverseButtonAattachment.reset (new ButtonAttachment (valueTreeState, "Reverse", reverseButton));
+    reverseButtonAattachment.reset (new ButtonAttachment (valueTreeState, "reverse", reverseButton));
     
     addAndMakeVisible(MixDial);
     MixDialAttachment.reset (new SliderAttachment (valueTreeState, "Mix", MixDial));
@@ -24,20 +26,20 @@ CustomAudioEditor::CustomAudioEditor (CustomAudioProcessor& p, juce::AudioProces
     MixLabel.setText ("Mix", juce::dontSendNotification);
     MixLabel.setJustificationType(juce::Justification::centred);
     
-    addAndMakeVisible(grainSpeedDial);
-    grainSpeedDialAttachment.reset (new SliderAttachment (valueTreeState, "grainSpeed", grainSpeedDial));
-    grainSpeedDial.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    grainSpeedDial.setTextBoxStyle (juce::Slider::TextBoxBelow, false, grainSpeedDial.getTextBoxWidth(), grainSpeedDial.getTextBoxHeight());
-    grainSpeedDial.setTextValueSuffix (" Hz");
-    grainSpeedDial.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
-    grainSpeedDial.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::darkorange.withAlpha(0.75f));
-    grainSpeedDial.setColour(juce::Slider::thumbColourId , juce::Colours::darkorange.brighter(1.5));
-    grainSpeedDial.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
-    grainSpeedDial.setColour(juce::Slider::textBoxOutlineColourId , juce::Colours::white);
+    addAndMakeVisible(grainSizeDial);
+    grainSizeDialAttachment.reset (new SliderAttachment (valueTreeState, "grainSize", grainSizeDial));
+    grainSizeDial.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    grainSizeDial.setTextBoxStyle (juce::Slider::TextBoxBelow, false, grainSizeDial.getTextBoxWidth(), grainSizeDial.getTextBoxHeight());
+    grainSizeDial.setTextValueSuffix (" ms");
+    grainSizeDial.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
+    grainSizeDial.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::darkorange.withAlpha(0.75f));
+    grainSizeDial.setColour(juce::Slider::thumbColourId , juce::Colours::darkorange.brighter(1.5));
+    grainSizeDial.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
+    grainSizeDial.setColour(juce::Slider::textBoxOutlineColourId , juce::Colours::white);
    
-    addAndMakeVisible(grainSpeedLabel);
-    grainSpeedLabel.setText ("grainSpeed", juce::dontSendNotification);
-    grainSpeedLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(grainSizeLabel);
+    grainSizeLabel.setText ("grainSize", juce::dontSendNotification);
+    grainSizeLabel.setJustificationType(juce::Justification::centred);
 
     addAndMakeVisible(densityDial);
     densityDialAttachment.reset (new SliderAttachment (valueTreeState, "density", densityDial));
@@ -118,16 +120,18 @@ void CustomAudioEditor::resized()
     const int componentHeight = (area.getHeight() - 60) / 4;
     const int padding = 20;
 
-    MixDial.setBounds(padding, padding, componentWidth1 ,  componentHeight);
-    grainSpeedDial.setBounds(MixDial.getRight() + padding, padding, componentWidth1 ,  componentHeight);
-    densityDial.setBounds(grainSpeedDial.getRight() + padding,  padding, componentWidth1 ,  componentHeight);
-    movDurDial.setBounds(densityDial.getRight() + padding,  padding, componentWidth1 ,  componentHeight);
+    waveFormDisplay.setBounds(padding, padding, area.getWidth() - (padding * 2), area.getHeight() / 2 - (padding * 2));
+
+    MixDial.setBounds(padding, waveFormDisplay.getBottom() + padding, componentWidth1 ,  componentHeight);
+    grainSizeDial.setBounds(MixDial.getRight() + padding, waveFormDisplay.getBottom() + padding, componentWidth1 ,  componentHeight);
+    densityDial.setBounds(grainSizeDial.getRight() + padding,  waveFormDisplay.getBottom() + padding, componentWidth1 ,  componentHeight);
+    movDurDial.setBounds(densityDial.getRight() + padding,  waveFormDisplay.getBottom() + padding, componentWidth1 ,  componentHeight);
     reverseButton.setBounds(padding,  MixDial.getBottom() + padding, componentWidth1 ,  componentHeight);
     delTimeDial.setBounds(reverseButton.getRight()  + padding, MixDial.getBottom() + padding, componentWidth1 ,  componentHeight);
     feedCoeDial.setBounds(delTimeDial.getRight() + padding,  MixDial.getBottom() + padding, componentWidth1 ,  componentHeight);
 
     MixLabel.setBounds(MixDial.getX(), MixDial.getY()-10, MixDial.getWidth(),MixDial.getTextBoxHeight() );
-    grainSpeedLabel.setBounds(grainSpeedDial.getX(), grainSpeedDial.getY()-10, grainSpeedDial.getWidth(),grainSpeedDial.getTextBoxHeight() );
+    grainSizeLabel.setBounds(grainSizeDial.getX(), grainSizeDial.getY()-10, grainSizeDial.getWidth(),grainSizeDial.getTextBoxHeight() );
     densityLabel.setBounds(densityDial.getX(), densityDial.getY()-10, densityDial.getWidth(),densityDial.getTextBoxHeight() );
     movDurLabel.setBounds(movDurDial.getX(), movDurDial.getY()-10, movDurDial.getWidth(),movDurDial.getTextBoxHeight() );
     delTimeLabel.setBounds(delTimeDial.getX(), delTimeDial.getY()-10, delTimeDial.getWidth(),delTimeDial.getTextBoxHeight() );

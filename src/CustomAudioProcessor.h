@@ -33,11 +33,27 @@ public:
     const juce::String getProgramName(int index) override;
     void changeProgramName(int index, const juce::String& newName) override;
 
+    void setBufferData();
+    void updateBuffer(float* rnboBuffer, float* rnboBufferIndex);
+    //std::vector cannot handle 2D array directly
+    std::vector<float> ringBuffer;
+    std::vector<float> ringBufferIndex;
+    const float* getRingBufferPointer() const noexcept { return &ringBuffer[0]; }
+    const float* getRingBufferIndex() const noexcept { return &ringBufferIndex[0]; }
+
+    const int* getInformationForDisplay() const noexcept { return informationForDisplay; }   
+
     RNBO::CoreObject& getRnboObject() { return rnboObject; }
 private:
     juce::AudioProcessorValueTreeState parameters;  
     std::unordered_map<juce::String, RNBO::ParameterIndex> apvtsParamIdToRnboParamIndex;
 
     RNBO::CoreObject rnboObject;
+    std::unique_ptr<float[]> RNBORingbuffer;
+    std::unique_ptr<float[]> RNBORingbufferIndex;
+    int buffSize;
+    int numChannels  = 2;
+    int informationForDisplay[2]; //0: buffSize, 1: numChannels
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CustomAudioProcessor)
 };

@@ -16,8 +16,8 @@ parameters(*this, nullptr, juce::Identifier("PARAMETERS"),
     juce::NormalisableRange<float>(0.f, 100.f, 0.01f, 1.f), 50.f),
     std::make_unique<juce::AudioParameterFloat>(ParameterID { "movDur",  1}, "movDur",
     juce::NormalisableRange<float>(5.f, 1000.f, 0.01f, 1.f), 500.f),
-    std::make_unique<juce::AudioParameterFloat>(ParameterID { "grainSpeed",  1}, "grainSpeed",
-    juce::NormalisableRange<float>(0.1f, 30.f, 0.01f, 1.f), 1.f),
+    std::make_unique<juce::AudioParameterFloat>(ParameterID { "grainSize",  1}, "grainSize",
+    juce::NormalisableRange<float>(10.f, 2000.f, 0.01f, 1.f), 1000.f),
     std::make_unique<juce::AudioParameterFloat>(ParameterID { "density",  1}, "density",
     juce::NormalisableRange<float>(1.f, 100.f, 0.01f, 1.f), 50.f),
     std::make_unique<juce::AudioParameterFloat>(ParameterID { "feedCoe",  1}, "feedCoe",
@@ -39,8 +39,8 @@ parameters(*this, nullptr, juce::Identifier("PARAMETERS"),
       auto paramID = juce::String (rnboObject.getParameterId (i));
       std::cout << "paramID " << paramID << std::endl;
       std::cout << "Parameter Index: " << i << std::endl;
-      std::cout << "Min Value: " << info.min << std::endl;
-      std::cout << "Max Value: " << info.max << std::endl;
+    //  std::cout << "Min Value: " << info.min << std::endl;
+    //  std::cout << "Max Value: " << info.max << std::endl;
         
       // Each apvts parameter id and range must be the same as the rnbo param object's.
       // If you hit this assertion then you need to fix the incorrect id in ParamIDs.h.
@@ -62,6 +62,14 @@ parameters(*this, nullptr, juce::Identifier("PARAMETERS"),
 void CustomAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     rnboObject.prepareToProcess (sampleRate, static_cast<size_t> (samplesPerBlock));
+    buffSize = rnboObject.getSampleRate() * 2;
+    ringBuffer.resize(buffSize * numChannels);
+    ringBufferIndex.resize(numChannels);
+
+    informationForDisplay[0] = buffSize;
+    informationForDisplay[1] = numChannels;
+    informationForDisplay[2] = static_cast<int>(rnboObject.getSampleRate());
+    setBufferData();
 }
  
 void CustomAudioProcessor::releaseResources()
@@ -77,10 +85,13 @@ void CustomAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::
         buffer.getArrayOfWritePointers(), static_cast<RNBO::Index>(buffer.getNumChannels()),
         static_cast<RNBO::Index> (buffer.getNumSamples())
     );     
+
+    updateBuffer(RNBORingbuffer.get(), RNBORingbufferIndex.get());
 }
 
 void CustomAudioProcessor::parameterChanged(const juce::String& parameterID, float newValue)
 {
+    std::cout << "Parameter Changed: " << parameterID << " New Value: " << newValue << std::endl;
     rnboObject.setParameterValue (apvtsParamIdToRnboParamIndex[parameterID], newValue);
 }
 
@@ -159,4 +170,47 @@ void CustomAudioProcessor::setStateInformation (const void* data, int sizeInByte
     if (xmlState.get() != nullptr)
         if (xmlState->hasTagName(parameters.state.getType()))
             parameters.replaceState(juce::ValueTree::fromXml(*xmlState));
+}
+
+void CustomAudioProcessor::setBufferData()
+{
+    RNBORingbuffer = std::make_unique<float[]>(buffSize * numChannels);
+    RNBORingbufferIndex = std::make_unique<float[]>(numChannels);
+
+    std::fill(RNBORingbuffer.get(), RNBORingbuffer.get() + buffSize * numChannels, 0.0f);
+    std::fill(RNBORingbufferIndex.get(), RNBORingbufferIndex.get() + numChannels, 0.0f);
+
+    //RNBO::Float32AudioBuffer scopeBufferType(1, this->rnboObject.getSampleRate());
+    RNBO::Float32AudioBuffer bufferType(numChannels, this->rnboObject.getSampleRate());
+
+    this->rnboObject.setExternalData(
+        "ringBuff",
+        reinterpret_cast<char*>(RNBORingbuffer.get()),
+        buffSize * numChannels * sizeof(float),
+        bufferType
+    );
+
+    this->rnboObject.setExternalData(
+        "ringBuffIndex",
+        reinterpret_cast<char*>(RNBORingbufferIndex.get()),
+        numChannels * sizeof(float),
+        bufferType
+    );
+}
+
+void CustomAudioProcessor::updateBuffer(float* RNBORingbuffer, float* RNBORingbufferIndex)
+{
+    for (int i = 0; i < buffSize; ++i){
+        for (int ch = 0; ch < numChannels; ++ch){
+            ringBuffer[i * numChannels + ch] = RNBORingbuffer[i * numChannels + ch];
+        }
+    }
+
+    //std::cout << "ringBuffer size: " << buffSize * numChannels << std::endl;
+
+    for (int ch = 0; ch < numChannels; ++ch){
+        ringBufferIndex[ch] = RNBORingbufferIndex[ch];
+        //std::cout << "ringBufferIndex[" << ch << "]: " << ringBufferIndex[ch] << std::endl;
+    }
+
 }

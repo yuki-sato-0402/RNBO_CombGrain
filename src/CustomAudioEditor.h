@@ -1,5 +1,6 @@
 #include "JuceHeader.h"
 #include "RNBO.h"
+#include "WaveFormDisplay.h"
 
 class CustomAudioEditor : public juce::AudioProcessorEditor
 {
@@ -16,7 +17,7 @@ private:
     CustomAudioProcessor& audioProcessor;
     
     juce::Slider MixDial;
-    juce::Slider grainSpeedDial;
+    juce::Slider grainSizeDial;
     juce::Slider densityDial;
     juce::Slider movDurDial;
     juce::Slider delTimeDial;
@@ -25,19 +26,21 @@ private:
     juce::ToggleButton reverseButton;
 
     juce::Label  MixLabel;
-    juce::Label  grainSpeedLabel;
+    juce::Label  grainSizeLabel;
     juce::Label  densityLabel;
     juce::Label  movDurLabel;
     juce::Label  delTimeLabel;
     juce::Label  feedCoeLabel;
 
     std::unique_ptr<SliderAttachment> MixDialAttachment;
-    std::unique_ptr<SliderAttachment> grainSpeedDialAttachment;
+    std::unique_ptr<SliderAttachment> grainSizeDialAttachment;
     std::unique_ptr<SliderAttachment> densityDialAttachment;
     std::unique_ptr<SliderAttachment> movDurDialAttachment;
     std::unique_ptr<SliderAttachment> delTimeDialAttachment;
     std::unique_ptr<SliderAttachment> feedCoeDialAttachment;
     std::unique_ptr<ButtonAttachment> reverseButtonAattachment;
+
+    WaveFormDisplay waveFormDisplay;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CustomAudioEditor)
 };

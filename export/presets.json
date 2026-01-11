@@ -6,16 +6,16 @@
         "value": 100
       },
       "delTime": {
-        "value": 250
+        "value": 75
       },
       "density": {
-        "value": 40
+        "value": 100
       },
       "feedCoe": {
-        "value": 0.5
+        "value": 0.31800000000000006
       },
-      "grainSpeed": {
-        "value": 10
+      "grainSize": {
+        "value": 483
       },
       "movDur": {
         "value": 500
