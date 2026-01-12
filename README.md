@@ -15,7 +15,9 @@ For *Getting Started*, please refer to the original repository. Also included in
 ## Parameter explanation
 - **Mix** : You can control the ratio of dry sound to wet sound.
 
-- **grainSpeed** : You can control the playback speed of the grain.
+- **grainSize** : You can control the size of the grain.
+
+- **density** : You can control the grain density (playback frequency).
 
 - **movDur** :  You can control how long it takes for a grain to move through the ring buffer.
 
