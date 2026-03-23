@@ -1,13 +1,15 @@
 # RNBO_CombGrain
+**A unique Granular Synthesizer and Feedback Delay plugin (VST3 / AU / Standalone)**
 
-This is a Granular synth and feedback delay combination by RNBO (Max Msp).
+This project combines granular synthesis with a feedback delay line to create distinctive, evolving textures. By passing grains through a delay buffer during output, it generates complex soundscapes and metallic resonances.
 
-By passing the grain through a feedback delay when outputting it, you can create a unique sound.
+## Key Features
+- **Multi-Format Support**: Works as a **VST3 plugin, AU (Audio Unit) plugin, and Standalone application**.
+- **Hybrid Synthesis**: Seamlessly blends granular processing with feedback delay.
+- **JUCE Integration**: Uses `AudioProcessorValueTreeState` for robust parameter management and full DAW automation.
 
-I have also arranged the code to use the [AudioProcessorValueTreeState](https://docs.juce.com/master/classAudioProcessorValueTreeState.html).
-Built from the [rnbo.example.juce](https://github.com/Cycling74/rnbo.example.juce).  
-
-For *Getting Started*, please refer to the original repository. Also included in this repository is the C++ program output from RNBO in `export/`. And Max patch is included in `patches/`.
+Built from the rnbo.example.juce template.
+The C++ source exported from RNBO is in export/, and the original Max patch is in patches/.
 
 ## Demonstration
 [Youtube<img width="712" height="640" alt="Screenshot 2026-01-12 at 17 28 26" src="https://github.com/user-attachments/assets/91930cce-f179-4618-b5ac-eff9e88445af" />](https://youtu.be/6N8od3bVpZA?si=NGJOEIaaf8gUuiXw)
