@@ -60,13 +60,27 @@ if (EXISTS ${RNBO_BINARY_DATA_FILE})
   target_sources(RNBOAudioPlugin PRIVATE ${RNBO_BINARY_DATA_FILE})
 endif()
 
+# Suppress warnings for RNBO's automatically generated and external source files only
+set(RNBO_SOURCES
+  ${RNBO_CLASS_FILE}
+  "${RNBO_CPP_DIR}/RNBO.cpp"
+)
+if (EXISTS ${RNBO_BINARY_DATA_FILE})
+  list(APPEND RNBO_SOURCES ${RNBO_BINARY_DATA_FILE})
+endif()
+set_source_files_properties(${RNBO_SOURCES} PROPERTIES
+  COMPILE_OPTIONS "$<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:-w>;$<$<CXX_COMPILER_ID:MSVC>:/w>"
+)
+
+
 target_include_directories(RNBOAudioPlugin
-  PRIVATE
+  SYSTEM PRIVATE
   ${RNBO_CPP_DIR}/
   ${RNBO_CPP_DIR}/src
   ${RNBO_CPP_DIR}/common/
   ${RNBO_CPP_DIR}/adapters/juce/
   ${RNBO_CPP_DIR}/src/3rdparty/
+  PRIVATE
   src
 )
 
