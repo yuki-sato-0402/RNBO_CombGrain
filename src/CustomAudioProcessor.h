@@ -38,8 +38,8 @@ public:
     //std::vector cannot handle 2D array directly
     std::vector<float> ringBuffer;
     std::vector<float> ringBufferIndex;
-    const float* getRingBufferPointer() const noexcept { return &ringBuffer[0]; }
-    const float* getRingBufferIndex() const noexcept { return &ringBufferIndex[0]; }
+    const float* getRingBufferPointer() const noexcept { return ringBuffer.data(); }
+    const float* getRingBufferIndex() const noexcept { return ringBufferIndex.data(); }
 
     const int* getInformationForDisplay() const noexcept { return informationForDisplay; }   
 
@@ -51,9 +51,9 @@ private:
     RNBO::CoreObject rnboObject;
     std::unique_ptr<float[]> RNBORingbuffer;
     std::unique_ptr<float[]> RNBORingbufferIndex;
-    int buffSize;
-    int numChannels  = 2;
-    int informationForDisplay[2]; //0: buffSize, 1: numChannels
+    size_t buffSize = 0;
+    size_t numChannels = 2;
+    int informationForDisplay[3] = {0, 0, 0}; //0: buffSize, 1: numChannels, 2: sampleRate
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CustomAudioProcessor)
 };

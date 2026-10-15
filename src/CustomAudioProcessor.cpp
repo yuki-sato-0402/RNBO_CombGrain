@@ -62,12 +62,12 @@ parameters(*this, nullptr, juce::Identifier("PARAMETERS"),
 void CustomAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     rnboObject.prepareToProcess (sampleRate, static_cast<size_t> (samplesPerBlock));
-    buffSize = rnboObject.getSampleRate() * 2;
+    buffSize = static_cast<size_t>(rnboObject.getSampleRate() * 2.0);
     ringBuffer.resize(buffSize * numChannels);
     ringBufferIndex.resize(numChannels);
 
-    informationForDisplay[0] = buffSize;
-    informationForDisplay[1] = numChannels;
+    informationForDisplay[0] = static_cast<int>(buffSize);
+    informationForDisplay[1] = static_cast<int>(numChannels);
     informationForDisplay[2] = static_cast<int>(rnboObject.getSampleRate());
     setBufferData();
 }
@@ -181,7 +181,7 @@ void CustomAudioProcessor::setBufferData()
     std::fill(RNBORingbufferIndex.get(), RNBORingbufferIndex.get() + numChannels, 0.0f);
 
     //RNBO::Float32AudioBuffer scopeBufferType(1, this->rnboObject.getSampleRate());
-    RNBO::Float32AudioBuffer bufferType(numChannels, this->rnboObject.getSampleRate());
+    RNBO::Float32AudioBuffer bufferType(static_cast<RNBO::Index>(numChannels), this->rnboObject.getSampleRate());
 
     this->rnboObject.setExternalData(
         "ringBuff",
@@ -198,18 +198,18 @@ void CustomAudioProcessor::setBufferData()
     );
 }
 
-void CustomAudioProcessor::updateBuffer(float* RNBORingbuffer, float* RNBORingbufferIndex)
+void CustomAudioProcessor::updateBuffer(float* rnboBuffer, float* rnboBufferIndex)
 {
-    for (int i = 0; i < buffSize; ++i){
-        for (int ch = 0; ch < numChannels; ++ch){
-            ringBuffer[i * numChannels + ch] = RNBORingbuffer[i * numChannels + ch];
+    for (size_t i = 0; i < buffSize; ++i){
+        for (size_t ch = 0; ch < numChannels; ++ch){
+            ringBuffer[i * numChannels + ch] = rnboBuffer[i * numChannels + ch];
         }
     }
 
     //std::cout << "ringBuffer size: " << buffSize * numChannels << std::endl;
 
-    for (int ch = 0; ch < numChannels; ++ch){
-        ringBufferIndex[ch] = RNBORingbufferIndex[ch];
+    for (size_t ch = 0; ch < numChannels; ++ch){
+        ringBufferIndex[ch] = rnboBufferIndex[ch];
         //std::cout << "ringBufferIndex[" << ch << "]: " << ringBufferIndex[ch] << std::endl;
     }
 
